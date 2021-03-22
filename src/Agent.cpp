@@ -38,6 +38,21 @@ glm::vec4 Agent::getLOSColour() const
 	return m_LOSColour;
 }
 
+float Agent::getDetectionDistance() const
+{
+	return m_DetectionDistance;
+}
+
+bool Agent::hasDetection() const
+{
+	return m_hasDetection;
+}
+
+glm::vec4 Agent::getDetectionColor() const
+{
+	return m_DetectionColour;
+}
+
 void Agent::setLOSDistance(const float distance)
 {
 	m_LOSDistance = distance;
@@ -69,6 +84,22 @@ void Agent::setCurrentDirection(glm::vec2 newDirection)
 void Agent::setLOSColour(glm::vec4 colour)
 {
 	m_LOSColour = colour;
+}
+
+void Agent::setDetectionDistance(float distance)
+{
+	m_DetectionDistance = distance;
+}
+
+void Agent::setHasDetection(bool state)
+{
+	m_hasDetection = state;
+	m_DetectionColour = (m_hasDetection) ? glm::vec4(0, 1, 0, 1) : glm::vec4(0, 0, 1, 1);
+}
+
+void Agent::setDetectionColor(glm::vec4 colour)
+{
+	m_DetectionColour = colour;
 }
 
 void Agent::m_changeDirection()

@@ -24,6 +24,9 @@ public:
 	bool hasLOS() const;
 	float getCurrentHeading() const;
 	glm::vec4 getLOSColour() const;
+	float getDetectionDistance() const;
+	bool hasDetection() const;
+	glm::vec4 getDetectionColor() const;
 
 	// setters
 	void setTargetPosition(glm::vec2 newPosition);
@@ -32,6 +35,9 @@ public:
 	void setHasLOS(bool state);
 	void setCurrentHeading(float heading);
 	void setLOSColour(glm::vec4 colour);
+	void setDetectionDistance(float distance);
+	void setHasDetection(bool state);
+	void setDetectionColor(glm::vec4 colour);
 
 private:
 	void m_changeDirection();
@@ -43,6 +49,11 @@ private:
 	float m_LOSDistance;
 	bool m_hasLOS;
 	glm::vec4 m_LOSColour;
+
+	//Detection Radius
+	float m_DetectionDistance;
+	bool m_hasDetection;
+	glm::vec4 m_DetectionColour;
 };
 
 

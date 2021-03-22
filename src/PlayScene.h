@@ -39,6 +39,7 @@ private:
 	Obstacle* m_pObstacle2;
 	Obstacle* m_pObstacle3;
 	void m_CheckShipLOS(DisplayObject* object);
+	void m_CheckShipDetection(DisplayObject* object);
 
 	DecisionTree* decisionTree;
 };
