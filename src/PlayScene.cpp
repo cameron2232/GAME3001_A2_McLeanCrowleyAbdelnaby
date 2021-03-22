@@ -236,3 +236,12 @@ void PlayScene::m_CheckShipDetection(DisplayObject* target_object)
 		m_pShip->setHasDetection(hasDetection);
 	}
 }
+
+void PlayScene::m_setDebugMode(bool state)
+{
+}
+
+bool PlayScene::m_getDebugMode() const
+{
+	return false;
+}
