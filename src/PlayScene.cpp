@@ -33,6 +33,8 @@ void PlayScene::update()
 	updateDisplayList();
 
 	m_CheckShipLOS(m_pTarget);
+
+	m_CheckShipDetection(m_pTarget);
 }
 
 void PlayScene::clean()
@@ -59,9 +61,9 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
+	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
-
+		m_pShip->setDebug(!m_pShip->getDebugState());
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -206,4 +208,41 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 
 		m_pShip->setHasLOS(hasLOS);
 	}
+}
+
+void PlayScene::m_CheckShipDetection(DisplayObject* target_object)
+{
+	// if ship to target distance is less than or equal to detection Distance
+	auto ShipToTargetDistance = Util::distance(m_pShip->getTransform()->position, target_object->getTransform()->position);
+	if (ShipToTargetDistance <= m_pShip->getDetectionDistance())
+	{
+		std::vector<DisplayObject*> contactList;
+		for (auto object : getDisplayList())
+		{
+			// check if object is farther than than the target
+			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
+
+			if (ShipToObjectDistance <= ShipToTargetDistance)
+			{
+				if ((object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
+				{
+					contactList.push_back(object);
+				}
+			}
+		}
+		contactList.push_back(target_object); // add the target to the end of the list
+		auto hasDetection = CollisionManager::detectionCheck(m_pShip->getTransform()->position, m_pShip->getDetectionDistance(), contactList, target_object);
+
+		m_pShip->setHasDetection(hasDetection);
+	}
+}
+
+void PlayScene::m_setDebugMode(bool state)
+{
+	m_isGridEnabled = state;
+}
+
+bool PlayScene::m_getDebugMode() const
+{
+	return m_isGridEnabled;
 }
