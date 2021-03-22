@@ -3,6 +3,7 @@
 #define __TARGET__
 
 
+#include "Agent.h"
 #include "DisplayObject.h"
 
 class Target final : public DisplayObject

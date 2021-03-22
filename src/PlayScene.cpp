@@ -61,9 +61,9 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
+	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
-
+		m_pShip->setDebug(!m_pShip->getDebugState());
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -239,9 +239,10 @@ void PlayScene::m_CheckShipDetection(DisplayObject* target_object)
 
 void PlayScene::m_setDebugMode(bool state)
 {
+	m_isGridEnabled = state;
 }
 
 bool PlayScene::m_getDebugMode() const
 {
-	return false;
+	return m_isGridEnabled;
 }

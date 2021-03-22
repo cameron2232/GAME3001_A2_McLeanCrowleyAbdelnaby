@@ -8,6 +8,16 @@ Agent::Agent() {}
 
 Agent::~Agent() = default;
 
+bool Agent::getDebugState() const
+{
+	return m_DebugEnabled;
+}
+
+void Agent::setDebug(bool state)
+{
+	m_DebugEnabled = state;
+}
+
 glm::vec2 Agent::getTargetPosition() const
 {
 	return m_targetPosition;
