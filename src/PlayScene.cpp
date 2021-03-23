@@ -73,6 +73,22 @@ void PlayScene::handleEvents()
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
 	{
 	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
+	{
+		m_pShip->getTransform()->position.y -= m_playerSpeed;
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
+	{
+		m_pShip->getTransform()->position.x -= m_playerSpeed;
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
+	{
+		m_pShip->getTransform()->position.y += m_playerSpeed;
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+	{
+		m_pShip->getTransform()->position.x += m_playerSpeed;
+	}
 	
 }
 

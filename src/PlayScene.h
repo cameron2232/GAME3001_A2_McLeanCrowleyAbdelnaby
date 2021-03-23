@@ -44,6 +44,7 @@ private:
 	bool m_getDebugMode() const;
 
 	DecisionTree* decisionTree;
+	const float m_playerSpeed = 5.0f;
 };
 
 
