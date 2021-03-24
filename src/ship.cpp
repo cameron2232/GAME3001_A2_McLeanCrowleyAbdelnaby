@@ -42,7 +42,7 @@ void Ship::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, true);
+	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, false);
 
 
 	if (getDebugState())
@@ -52,14 +52,14 @@ void Ship::draw()
 		//Draw Detection Radius
 		Util::DrawCircle(getTransform()->position, getDetectionDistance(), getDetectionColor());
 	}
-	std::cout << std::endl << getDebugState() << std::endl;
+	//std::cout << std::endl << getDebugState() << std::endl;
 }
 
 
 void Ship::update()
 {
-	/*move();
-	m_checkBounds();*/
+	//move();
+	////m_checkBounds();
 }
 
 void Ship::clean()

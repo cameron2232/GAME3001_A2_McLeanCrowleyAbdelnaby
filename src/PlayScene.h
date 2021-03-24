@@ -23,6 +23,7 @@ public:
 	virtual void clean() override;
 	virtual void handleEvents() override;
 	virtual void start() override;
+	void CollisionsUpdate();
 
 	
 
@@ -35,9 +36,7 @@ private:
 
 	Target* m_pTarget;
 	Ship* m_pShip;
-	Obstacle* m_pObstacle1;
-	Obstacle* m_pObstacle2;
-	Obstacle* m_pObstacle3;
+	Obstacle* m_pObstacle[3];
 	void m_CheckShipLOS(DisplayObject* object);
 	void m_CheckShipDetection(DisplayObject* object);
 	void m_setDebugMode(bool state);
