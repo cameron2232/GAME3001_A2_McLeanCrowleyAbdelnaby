@@ -65,6 +65,8 @@ void PlayScene::handleEvents()
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
 		m_pShip->setDebug(!m_pShip->getDebugState());
+		for (auto node : m_pNode)
+			node->setDebug(!node->getDebugState());
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -124,10 +126,15 @@ void PlayScene::start()
 	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
 	addChild(m_pTarget);
 
+	m_pNode.push_back(new Node(50, 50));
+	for (auto node : m_pNode)
+		addChild(node);
+
 	// Create Decision Tree
 	decisionTree = new DecisionTree();
 	decisionTree->setAgent(m_pShip);
 	decisionTree->Display();
+
 
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;

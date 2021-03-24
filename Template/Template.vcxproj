@@ -168,6 +168,7 @@
     <ClCompile Include="..\src\CollisionManager.cpp" />
     <ClCompile Include="..\src\DecisionTree.cpp" />
     <ClCompile Include="..\src\LOSCondition.cpp" />
+    <ClCompile Include="..\src\MapNode.cpp" />
     <ClCompile Include="..\src\MovetoLOSAction.cpp" />
     <ClCompile Include="..\src\MoveToPlayerAction.cpp" />
     <ClCompile Include="..\src\NavigationObject.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="..\src\DecisionTree.h" />
     <ClInclude Include="..\src\Heuristic.h" />
     <ClInclude Include="..\src\LOSCondition.h" />
+    <ClInclude Include="..\src\MapNode.h" />
     <ClInclude Include="..\src\MoveToLOSAction.h" />
     <ClInclude Include="..\src\MoveToPlayerAction.h" />
     <ClInclude Include="..\src\NavigationObject.h" />
