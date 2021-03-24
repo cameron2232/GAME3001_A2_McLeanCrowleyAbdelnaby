@@ -180,8 +180,13 @@
     <ClCompile Include="..\src\PatrolAction.cpp">
       <Filter>Decision\Actions</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\src\Enemy.cpp">
       <Filter>Decision\Agents</Filter>
+=======
+    <ClCompile Include="..\src\MapNode.cpp">
+      <Filter>Decision\Core Components</Filter>
+>>>>>>> Cameron'sBranch
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -377,8 +382,13 @@
     <ClInclude Include="..\src\PatrolAction.h">
       <Filter>Decision\Actions</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\src\Enemy.h">
       <Filter>Decision\Agents</Filter>
+=======
+    <ClInclude Include="..\src\MapNode.h">
+      <Filter>Decision\Core Components</Filter>
+>>>>>>> Cameron'sBranch
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
