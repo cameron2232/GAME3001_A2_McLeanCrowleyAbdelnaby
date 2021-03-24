@@ -30,6 +30,7 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
+	CollisionsUpdate();
 	updateDisplayList();
 
 	m_CheckShipLOS(m_pTarget);
@@ -102,20 +103,21 @@ void PlayScene::start()
 	m_pShip->getTransform()->position = glm::vec2(200.0f, 300.0f);
 	addChild(m_pShip, 2);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle1 = new Obstacle();
-	m_pObstacle1->getTransform()->position = glm::vec2(400.0f, 300.0f);
-	addChild(m_pObstacle1);
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle2 = new Obstacle();
-	m_pObstacle2->getTransform()->position = glm::vec2(400.0f, 100.0f);
-	addChild(m_pObstacle2);
+	m_pObstacle[0] = new Obstacle();
+	m_pObstacle[0]->getTransform()->position = glm::vec2(300.0f, 250.0f);
+	addChild(m_pObstacle[0]);
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle3 = new Obstacle();
-	m_pObstacle3->getTransform()->position = glm::vec2(600.0f, 500.0f);
-	addChild(m_pObstacle3);
+	m_pObstacle[1] = new Obstacle();
+	m_pObstacle[1]->getTransform()->position = glm::vec2(400.0f, 50.0f);
+	addChild(m_pObstacle[1]);
+
+	// add the Obstacle to the scene as a start point
+	m_pObstacle[2] = new Obstacle();
+	m_pObstacle[2]->getTransform()->position = glm::vec2(200.0f, 450.0f);
+	addChild(m_pObstacle[2]);
 	
 	// added the target to the scene a goal
 	m_pTarget = new Target();
@@ -130,6 +132,33 @@ void PlayScene::start()
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
+}
+
+void PlayScene::CollisionsUpdate()
+{
+	for (auto& obj : m_pObstacle)
+	{
+		if (CollisionManager::AABBCheck(m_pShip, obj))
+		{
+			//std::cout << m_pShip->getTransform()->position.x - m_playerSpeed << std::endl;
+			if ((m_pShip->getTransform()->position.x + m_playerSpeed) <= (obj->getTransform()->position.x))
+			{
+				m_pShip->getTransform()->position.x -= m_playerSpeed *2;
+			}
+			else if ((m_pShip->getTransform()->position.x + m_playerSpeed) >= (obj->getTransform()->position.x + obj->getWidth()))
+			{
+				m_pShip->getTransform()->position.x += m_playerSpeed * 2;
+			}
+			else if ((m_pShip->getTransform()->position.y + m_pShip->getHeight() - m_playerSpeed) <= (obj->getTransform()->position.y))
+			{
+				m_pShip->getTransform()->position.y -= m_playerSpeed * 2;
+			}
+			else if ((m_pShip->getTransform()->position.y + m_playerSpeed) >= (obj->getTransform()->position.y + obj->getHeight()))
+			{
+				m_pShip->getTransform()->position.y += m_playerSpeed * 2;
+			}
+		}
+	}
 }
 
 void PlayScene::GUI_Function() 
