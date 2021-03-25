@@ -43,7 +43,7 @@ private:
 	void m_CheckShipDetection(DisplayObject* object);
 	void m_setDebugMode(bool state);
 	bool m_getDebugMode() const;
-
+	int cooldown = 20;
 	DecisionTree* decisionTree;
 	const float m_playerSpeed = 5.0f;
 };

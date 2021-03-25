@@ -4,7 +4,10 @@
 #include "TextureManager.h"
 #include "Util.h"
 
-Agent::Agent() {}
+Agent::Agent() 
+{
+	m_agentHealth = new Health();
+}
 
 Agent::~Agent() = default;
 
@@ -16,6 +19,33 @@ bool Agent::getDebugState() const
 void Agent::setDebug(bool state)
 {
 	m_DebugEnabled = state;
+}
+
+void Agent::setHealth(int health)
+{
+		m_agentHealth->setHealthCount(health);
+}
+
+int Agent::getHealth()
+{
+	return m_agentHealth->getHealthCount();
+}
+
+void Agent::setHealthPostion(glm::vec2 postion)
+{
+	m_agentHealth->getTransform()->position = postion;
+}
+
+
+
+
+void Agent::drawHeath()
+{
+	if (m_agentHealth != nullptr)
+	{
+		m_agentHealth->draw();
+		//std::cout << std::endl << "yes" << std::endl;
+	}
 }
 
 glm::vec2 Agent::getTargetPosition() const

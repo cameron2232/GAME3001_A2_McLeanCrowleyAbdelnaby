@@ -3,6 +3,7 @@
 #define __AGENT__
 
 #include "DisplayObject.h"
+#include "Health.h"
 #include <glm/vec4.hpp>
 
 class Agent : public DisplayObject
@@ -40,13 +41,17 @@ public:
 	void setHasDetection(bool state);
 	void setDetectionColor(glm::vec4 colour);
 	void setDebug(bool state);
+	void setHealth(int health);
+	int getHealth();
+	void setHealthPostion(glm::vec2 postion);
+	void drawHeath();
 
 private:
 	void m_changeDirection();
 	float m_currentHeading;
 	glm::vec2 m_currentDirection;
 	glm::vec2 m_targetPosition;
-
+	Health* m_agentHealth;
 	// LOS
 	float m_LOSDistance;
 	bool m_hasLOS;

@@ -29,6 +29,10 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	setDetectionColor(glm::vec4(0, 0, 1, 1));
 	setHasDetection(false);
 	setDebug(false);
+	setHealth(3);
+	setHealthPostion(getTransform()->position - glm::vec2(40.0f, 25.0f));
+
+	//getHealth()->getTransform()->position = getTransform()->position + glm::vec2(0.0f, 25.0f);
 }
 
 
@@ -52,7 +56,7 @@ void Ship::draw()
 		//Draw Detection Radius
 		Util::DrawCircle(getTransform()->position, getDetectionDistance(), getDetectionColor());
 	}
-	//std::cout << std::endl << getDebugState() << std::endl;
+	drawHeath();
 }
 
 
@@ -60,6 +64,7 @@ void Ship::update()
 {
 	//move();
 	////m_checkBounds();
+	setHealthPostion(getTransform()->position - glm::vec2(40.0f, 25.0f));
 }
 
 void Ship::clean()
