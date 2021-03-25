@@ -27,6 +27,7 @@ public:
 	float getDetectionDistance() const;
 	bool hasDetection() const;
 	glm::vec4 getDetectionColor() const;
+	bool getDebugState() const;
 
 	// setters
 	void setTargetPosition(glm::vec2 newPosition);
@@ -38,6 +39,7 @@ public:
 	void setDetectionDistance(float distance);
 	void setHasDetection(bool state);
 	void setDetectionColor(glm::vec4 colour);
+	void setDebug(bool state);
 
 private:
 	void m_changeDirection();
@@ -54,6 +56,9 @@ private:
 	float m_DetectionDistance;
 	bool m_hasDetection;
 	glm::vec4 m_DetectionColour;
+
+	//Debug
+	bool m_DebugEnabled;
 };
 
 

@@ -30,6 +30,7 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
+	CollisionsUpdate();
 	updateDisplayList();
 
 	m_CheckShipLOS(m_pTarget);
@@ -61,9 +62,11 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 
-	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_F))
+	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
-
+		m_pShip->setDebug(!m_pShip->getDebugState());
+		for (auto node : m_pNode)
+			node->setDebug(!node->getDebugState());
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -72,6 +75,22 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
 	{
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
+	{
+		m_pShip->getTransform()->position.y -= m_playerSpeed;
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
+	{
+		m_pShip->getTransform()->position.x -= m_playerSpeed;
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
+	{
+		m_pShip->getTransform()->position.y += m_playerSpeed;
+	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+	{
+		m_pShip->getTransform()->position.x += m_playerSpeed;
 	}
 	
 }
@@ -86,34 +105,67 @@ void PlayScene::start()
 	m_pShip->getTransform()->position = glm::vec2(200.0f, 300.0f);
 	addChild(m_pShip, 2);
 
-	// add the Obstacle to the scene as a start point
-	m_pObstacle1 = new Obstacle();
-	m_pObstacle1->getTransform()->position = glm::vec2(400.0f, 300.0f);
-	addChild(m_pObstacle1);
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle2 = new Obstacle();
-	m_pObstacle2->getTransform()->position = glm::vec2(400.0f, 100.0f);
-	addChild(m_pObstacle2);
+	m_pObstacle[0] = new Obstacle();
+	m_pObstacle[0]->getTransform()->position = glm::vec2(300.0f, 250.0f);
+	addChild(m_pObstacle[0]);
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle3 = new Obstacle();
-	m_pObstacle3->getTransform()->position = glm::vec2(600.0f, 500.0f);
-	addChild(m_pObstacle3);
+	m_pObstacle[1] = new Obstacle();
+	m_pObstacle[1]->getTransform()->position = glm::vec2(400.0f, 50.0f);
+	addChild(m_pObstacle[1]);
+
+	// add the Obstacle to the scene as a start point
+	m_pObstacle[2] = new Obstacle();
+	m_pObstacle[2]->getTransform()->position = glm::vec2(200.0f, 450.0f);
+	addChild(m_pObstacle[2]);
 	
 	// added the target to the scene a goal
 	m_pTarget = new Target();
 	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
 	addChild(m_pTarget);
 
+	m_pNode.push_back(new Node(50, 50));
+	for (auto node : m_pNode)
+		addChild(node);
+
 	// Create Decision Tree
 	decisionTree = new DecisionTree();
 	decisionTree->setAgent(m_pShip);
 	decisionTree->Display();
 
+
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
+}
+
+void PlayScene::CollisionsUpdate()
+{
+	for (auto& obj : m_pObstacle)
+	{
+		if (CollisionManager::AABBCheck(m_pShip, obj))
+		{
+			//std::cout << m_pShip->getTransform()->position.x - m_playerSpeed << std::endl;
+			if ((m_pShip->getTransform()->position.x + m_playerSpeed) <= (obj->getTransform()->position.x))
+			{
+				m_pShip->getTransform()->position.x -= m_playerSpeed *2;
+			}
+			else if ((m_pShip->getTransform()->position.x + m_playerSpeed) >= (obj->getTransform()->position.x + obj->getWidth()))
+			{
+				m_pShip->getTransform()->position.x += m_playerSpeed * 2;
+			}
+			else if ((m_pShip->getTransform()->position.y + m_pShip->getHeight() - m_playerSpeed) <= (obj->getTransform()->position.y))
+			{
+				m_pShip->getTransform()->position.y -= m_playerSpeed * 2;
+			}
+			else if ((m_pShip->getTransform()->position.y + m_playerSpeed) >= (obj->getTransform()->position.y + obj->getHeight()))
+			{
+				m_pShip->getTransform()->position.y += m_playerSpeed * 2;
+			}
+		}
+	}
 }
 
 void PlayScene::GUI_Function() 
@@ -239,9 +291,10 @@ void PlayScene::m_CheckShipDetection(DisplayObject* target_object)
 
 void PlayScene::m_setDebugMode(bool state)
 {
+	m_isGridEnabled = state;
 }
 
 bool PlayScene::m_getDebugMode() const
 {
-	return false;
+	return m_isGridEnabled;
 }

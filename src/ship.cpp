@@ -28,6 +28,7 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	setDetectionDistance(60.0f);
 	setDetectionColor(glm::vec4(0, 0, 1, 1));
 	setHasDetection(false);
+	setDebug(false);
 }
 
 
@@ -41,20 +42,24 @@ void Ship::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, true);
+	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, false);
 
-	// draw LOS
-	Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
 
-	// draw detection radius
-	Util::DrawCircle(getTransform()->position, getDetectionDistance(), getDetectionColor());
+	if (getDebugState())
+	{
+		//Draw LOS
+		Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
+		//Draw Detection Radius
+		Util::DrawCircle(getTransform()->position, getDetectionDistance(), getDetectionColor());
+	}
+	//std::cout << std::endl << getDebugState() << std::endl;
 }
 
 
 void Ship::update()
 {
-	/*move();
-	m_checkBounds();*/
+	//move();
+	////m_checkBounds();
 }
 
 void Ship::clean()
