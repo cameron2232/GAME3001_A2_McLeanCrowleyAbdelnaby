@@ -45,6 +45,7 @@ void PlayScene::clean()
 
 void PlayScene::handleEvents()
 {
+	cooldown--;
 	EventManager::Instance().update();
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_ESCAPE))
@@ -69,10 +70,23 @@ void PlayScene::handleEvents()
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
 	{
+		if (cooldown <= -20)
+		{
+			if(m_pShip->getHealth() != 3)
+				m_pShip->setHealth(m_pShip->getHealth() + 1);
+			std::cout << m_pShip->getHealth() << std::endl;
+			cooldown = 20;
+		}
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
 	{
+		if (cooldown <= -20)
+		{
+			m_pShip->setHealth(m_pShip->getHealth() - 1);
+			std::cout << m_pShip->getHealth() << std::endl;
+			cooldown = 20;
+		}
 	}
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
 	{
