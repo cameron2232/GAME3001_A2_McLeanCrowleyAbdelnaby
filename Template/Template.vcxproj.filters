@@ -183,6 +183,9 @@
     <ClCompile Include="..\src\Health.cpp">
       <Filter>Game Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MapNode.cpp">
+      <Filter>Decision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -379,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Health.h">
       <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MapNode.h">
+      <Filter>Decision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
