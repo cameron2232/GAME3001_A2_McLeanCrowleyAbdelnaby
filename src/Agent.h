@@ -4,6 +4,7 @@
 
 #include "DisplayObject.h"
 #include "Health.h"
+#include "EventManager.h"
 #include <glm/vec4.hpp>
 
 class Agent : public DisplayObject
@@ -29,6 +30,9 @@ public:
 	bool hasDetection() const;
 	glm::vec4 getDetectionColor() const;
 	bool getDebugState() const;
+	bool getMoving() const;
+	bool getXMoving() const;
+	bool getYMoving() const;
 
 	// setters
 	void setTargetPosition(glm::vec2 newPosition);
@@ -42,6 +46,9 @@ public:
 	void setDetectionColor(glm::vec4 colour);
 	void setDebug(bool state);
 	void setHealth(int health);
+	void setMoving(bool state);
+	void setXMoving(bool state);
+	void setYMoving(bool state);
 	int getHealth();
 	void setHealthPostion(glm::vec2 postion);
 	void drawHeath();
@@ -64,6 +71,9 @@ private:
 
 	//Debug
 	bool m_DebugEnabled;
+	bool m_isMoving;
+	bool m_isXMoving;
+	bool m_isYMoving;
 };
 
 

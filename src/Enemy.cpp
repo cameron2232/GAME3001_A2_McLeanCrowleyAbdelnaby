@@ -41,13 +41,17 @@ void Enemy::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, true);
+	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, false);
 
 	// draw LOS
-	Util::DrawLine(getTransform()->position, getTransform()->position + getCurrentDirection() * getLOSDistance(), getLOSColour());
+	if (getDebugState())
+	{
+		Util::DrawLine(glm::vec2(getTransform()->position.x + getWidth() / 2, getTransform()->position.y + getHeight() / 2),
+			(glm::vec2(getTransform()->position.x + getWidth() / 2, getTransform()->position.y + getHeight() / 2)) + getCurrentDirection() * getLOSDistance(), getLOSColour());
 
-	// draw detection radius
-	Util::DrawCircle(getTransform()->position, getDetectionDistance(), getDetectionColor());
+		// draw detection radius
+		Util::DrawCircle(glm::vec2(getTransform()->position.x + getWidth() / 2, getTransform()->position.y + getHeight() / 2), getDetectionDistance(), getDetectionColor());
+	}
 }
 
 

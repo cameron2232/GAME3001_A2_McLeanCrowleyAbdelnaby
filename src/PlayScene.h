@@ -11,6 +11,7 @@
 #include "SpaceShip.h"
 #include "Target.h"
 #include "MapNode.h"
+#include "Enemy.h"
 
 class PlayScene : public Scene
 {
@@ -37,7 +38,8 @@ private:
 
 	Target* m_pTarget;
 	Ship* m_pShip;
-	Obstacle* m_pObstacle[3];
+	Obstacle* m_pObstacle[5];
+	Enemy* m_pEnemy;
 	std::vector<Node*> m_pNode;
 	void m_CheckShipLOS(DisplayObject* object);
 	void m_CheckShipDetection(DisplayObject* object);
