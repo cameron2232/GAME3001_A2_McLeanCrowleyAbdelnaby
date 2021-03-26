@@ -189,6 +189,12 @@
     <ClCompile Include="..\src\Enemy.cpp">
       <Filter>Decision\Agents</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\MeleeAttack.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bullet.cpp">
+      <Filter>Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\StartScene.h">
@@ -391,6 +397,12 @@
     </ClInclude>
     <ClInclude Include="..\src\Enemy.h">
       <Filter>Decision\Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MeleeAttack.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Bullet.h">
+      <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

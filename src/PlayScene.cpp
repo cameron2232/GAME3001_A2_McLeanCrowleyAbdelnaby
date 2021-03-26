@@ -18,6 +18,10 @@ PlayScene::~PlayScene()
 
 void PlayScene::draw()
 {
+	for (int i = 0; i < m_pPlayerBullets.size(); i++)
+	{
+		addChild(m_pPlayerBullets[i]);
+	}
 	if(EventManager::Instance().isIMGUIActive())
 	{
 		GUI_Function();	
@@ -30,12 +34,18 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
+	std::cout << m_pPlayerBullets.size() << std::endl;
+	meleeCoolDown--;
 	CollisionsUpdate();
 	updateDisplayList();
-
 	m_CheckShipLOS(m_pTarget);
-
 	m_CheckShipDetection(m_pTarget);
+	if(m_meleeActtack != nullptr)
+		m_meleeActtack->getTransform()->position = m_pShip->getTransform()->position - glm::vec2(-30.0f, 10.f);
+	for (int i = 0; i < m_pPlayerBullets.size(); i++)
+	{
+		m_pPlayerBullets[i]->getTransform()->position.x += 10;
+	}
 }
 
 void PlayScene::clean()
@@ -106,7 +116,24 @@ void PlayScene::handleEvents()
 	{
 		m_pShip->getTransform()->position.x += m_playerSpeed;
 	}
-	
+	if (EventManager::Instance().getMouseButton(1))
+	{
+		addChild(m_meleeActtack);
+		m_meleeActtack->setEnabled(true);
+		meleeCoolDown = -10;
+	}
+	else
+	{
+		m_meleeActtack->setEnabled(false);
+	}
+	if (EventManager::Instance().getMouseButton(2))
+	{
+		if (cooldown <= -20)
+		{
+			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x - 20, m_pShip->getTransform()->position.y + 20));
+			cooldown = 20;
+		}
+	}
 }
 
 void PlayScene::start()
@@ -148,6 +175,8 @@ void PlayScene::start()
 	decisionTree = new DecisionTree();
 	decisionTree->setAgent(m_pShip);
 	decisionTree->Display();
+
+	m_meleeActtack = new MeleeAttack();
 
 
 	std::cout << "------------------------" << std::endl;

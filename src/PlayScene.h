@@ -11,6 +11,8 @@
 #include "SpaceShip.h"
 #include "Target.h"
 #include "MapNode.h"
+#include "MeleeAttack.h"
+#include "Bullet.h"
 
 class PlayScene : public Scene
 {
@@ -46,6 +48,9 @@ private:
 	int cooldown = 20;
 	DecisionTree* decisionTree;
 	const float m_playerSpeed = 5.0f;
+	MeleeAttack* m_meleeActtack;
+	int meleeCoolDown = -10;
+	std::vector<Bullet*> m_pPlayerBullets;
 };
 
 
