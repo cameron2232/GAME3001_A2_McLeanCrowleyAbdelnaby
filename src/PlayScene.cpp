@@ -18,6 +18,9 @@ PlayScene::~PlayScene()
 
 void PlayScene::draw()
 {
+	TextureManager::Instance()->draw("Background",
+		0, getTransform()->position.y, 0, 255, false);
+	
 	if(EventManager::Instance().isIMGUIActive())
 	{
 		GUI_Function();	
@@ -33,9 +36,9 @@ void PlayScene::update()
 	CollisionsUpdate();
 	updateDisplayList();
 
-	m_CheckShipLOS(m_pTarget);
+	m_CheckShipLOS(m_pEnemy);
 
-	m_CheckShipDetection(m_pTarget);
+	m_CheckShipDetection(m_pEnemy);
 }
 
 void PlayScene::clean()
@@ -68,6 +71,7 @@ void PlayScene::handleEvents()
 		m_pShip->setDebug(!m_pShip->getDebugState());
 		for (auto node : m_pNode)
 			node->setDebug(!node->getDebugState());
+		m_pEnemy->setDebug(!m_pEnemy->getDebugState());
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
@@ -90,22 +94,48 @@ void PlayScene::handleEvents()
 			cooldown = 20;
 		}
 	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
+	
+	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_W) || EventManager::Instance().isKeyDown(SDL_SCANCODE_S) 
+		|| EventManager::Instance().isKeyDown(SDL_SCANCODE_A) || EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
-		m_pShip->getTransform()->position.y -= m_playerSpeed;
+		m_pShip->setMoving(true);
+		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
+		{
+			m_pShip->setYMoving(true);
+			m_pShip->setCurrentDirection(glm::vec2(m_pShip->getCurrentDirection().x, -1.0f));
+		}
+		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
+		{
+			m_pShip->setYMoving(true);
+			m_pShip->setCurrentDirection(glm::vec2(m_pShip->getCurrentDirection().x, 1.0f));
+		}
+		else
+		{
+			m_pShip->setYMoving(false);
+		}
+		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
+		{
+			m_pShip->setXMoving(true);
+			m_pShip->setCurrentDirection(glm::vec2(-1.0f, m_pShip->getCurrentDirection().y));
+		}
+		else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+		{
+			m_pShip->setXMoving(true);
+			m_pShip->setCurrentDirection(glm::vec2(1.0f, m_pShip->getCurrentDirection().y));
+		}
+		else
+		{
+			m_pShip->setXMoving(false);
+		}
+
 	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
+
+	else
 	{
-		m_pShip->getTransform()->position.x -= m_playerSpeed;
+		m_pShip->setMoving(false);
 	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
-	{
-		m_pShip->getTransform()->position.y += m_playerSpeed;
-	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
-	{
-		m_pShip->getTransform()->position.x += m_playerSpeed;
-	}
+	
+	
 	
 }
 
@@ -114,33 +144,57 @@ void PlayScene::start()
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
+	TextureManager::Instance()->load("../Assets/textures/BackgroundFramework.png", "Background");
+
 	// add the ship to the scene as a start point
 	m_pShip = new Ship();
-	m_pShip->getTransform()->position = glm::vec2(200.0f, 300.0f);
+	m_pShip->getTransform()->position = glm::vec2(50.0f, 550.0f);
 	addChild(m_pShip, 2);
 
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle[0] = new Obstacle();
-	m_pObstacle[0]->getTransform()->position = glm::vec2(300.0f, 250.0f);
+	m_pObstacle[0] = new Obstacle(268, 241, 79.0f, 79.0f); //top left obstacle
 	addChild(m_pObstacle[0]);
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle[1] = new Obstacle();
-	m_pObstacle[1]->getTransform()->position = glm::vec2(400.0f, 50.0f);
+	m_pObstacle[1] = new Obstacle(134, 47, 0, 441);
 	addChild(m_pObstacle[1]);
 
 	// add the Obstacle to the scene as a start point
-	m_pObstacle[2] = new Obstacle();
-	m_pObstacle[2]->getTransform()->position = glm::vec2(200.0f, 450.0f);
+	m_pObstacle[2] = new Obstacle(61, 160, 229, 440);
 	addChild(m_pObstacle[2]);
+
+	m_pObstacle[3] = new Obstacle(192, 178, 536, 292);
+	addChild(m_pObstacle[3]);
+
+	m_pObstacle[4] = new Obstacle(249, 59, 503, 52);
+	addChild(m_pObstacle[4]);
 	
 	// added the target to the scene a goal
-	m_pTarget = new Target();
-	m_pTarget->getTransform()->position = glm::vec2(600.0f, 300.0f);
-	addChild(m_pTarget);
+	m_pEnemy = new Enemy();
+	m_pEnemy->getTransform()->position = glm::vec2(10.0f, 30.0f);
+	addChild(m_pEnemy);
 
-	m_pNode.push_back(new Node(50, 50));
+	m_pNode.push_back(new Node(40, 40)); //Top Nodes
+	m_pNode.push_back(new Node(110, 40));
+	m_pNode.push_back(new Node(170, 40));
+	m_pNode.push_back(new Node(230, 40));
+	m_pNode.push_back(new Node(290, 40));
+	m_pNode.push_back(new Node(365, 40));
+	m_pNode.push_back(new Node(365, 100)); //Right Nodes
+	m_pNode.push_back(new Node(365, 160));
+	m_pNode.push_back(new Node(365, 220));
+	m_pNode.push_back(new Node(365, 280));
+	m_pNode.push_back(new Node(365, 340));
+	m_pNode.push_back(new Node(290, 340)); //Bottom Nodes
+	m_pNode.push_back(new Node(230, 340));
+	m_pNode.push_back(new Node(170, 340));
+	m_pNode.push_back(new Node(110, 340));
+	m_pNode.push_back(new Node(40, 340));
+	m_pNode.push_back(new Node(40, 280)); //Left Nodes
+	m_pNode.push_back(new Node(40, 220));
+	m_pNode.push_back(new Node(40, 160));
+	m_pNode.push_back(new Node(40, 100));
 	for (auto node : m_pNode)
 		addChild(node);
 
@@ -162,11 +216,11 @@ void PlayScene::CollisionsUpdate()
 		if (CollisionManager::AABBCheck(m_pShip, obj))
 		{
 			//std::cout << m_pShip->getTransform()->position.x - m_playerSpeed << std::endl;
-			if ((m_pShip->getTransform()->position.x + m_playerSpeed) <= (obj->getTransform()->position.x))
+			if (int(m_pShip->getTransform()->position.x + m_pShip->getWidth() - m_pShip->getRigidBody()->velocity.x) <= (obj->getTransform()->position.x))
 			{
-				m_pShip->getTransform()->position.x -= m_playerSpeed *2;
+				m_pShip->getTransform()->position.x -= m_playerSpeed * 2;
 			}
-			else if ((m_pShip->getTransform()->position.x + m_playerSpeed) >= (obj->getTransform()->position.x + obj->getWidth()))
+			else if (int(m_pShip->getTransform()->position.x - m_pShip->getRigidBody()->velocity.x) >= (obj->getTransform()->position.x + obj->getWidth()))
 			{
 				m_pShip->getTransform()->position.x += m_playerSpeed * 2;
 			}
@@ -215,11 +269,11 @@ void PlayScene::GUI_Function()
 		std::cout << "------------------------\n" << std::endl;
 	}
 	
-	static int targetPosition[] = { m_pTarget->getTransform()->position.x, m_pTarget->getTransform()->position.y };
+	static int targetPosition[] = { m_pEnemy->getTransform()->position.x, m_pEnemy->getTransform()->position.y };
 	if(ImGui::SliderInt2("Target Position", targetPosition, 0, 800))
 	{
-		m_pTarget->getTransform()->position.x = targetPosition[0];
-		m_pTarget->getTransform()->position.y = targetPosition[1];
+		m_pEnemy->getTransform()->position.x = targetPosition[0];
+		m_pEnemy->getTransform()->position.y = targetPosition[1];
 	}
 	
 	ImGui::Separator();

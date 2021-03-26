@@ -11,6 +11,36 @@ Agent::Agent()
 
 Agent::~Agent() = default;
 
+bool Agent::getXMoving() const
+{
+	return m_isXMoving;
+}
+
+bool Agent::getYMoving() const
+{
+	return m_isYMoving;
+}
+
+void Agent::setXMoving(bool state)
+{
+	m_isXMoving = state;
+}
+
+void Agent::setYMoving(bool state)
+{
+	m_isYMoving = state;
+}
+
+bool Agent::getMoving() const
+{
+	return m_isMoving;
+}
+
+void Agent::setMoving(bool state)
+{
+	m_isMoving = state;
+}
+
 bool Agent::getDebugState() const
 {
 	return m_DebugEnabled;

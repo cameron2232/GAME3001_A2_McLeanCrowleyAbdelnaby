@@ -17,9 +17,11 @@ Node::~Node() = default;
 
 void Node::draw()
 {
-	
+	if(getDebugState())
+	{
 		TextureManager::Instance()->draw("node",
 			getTransform()->position.x, getTransform()->position.y, 0, 255, false);
+	}
 	
 }
 
