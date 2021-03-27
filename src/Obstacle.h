@@ -21,8 +21,12 @@ public:
 	void draw() override;
 	void update() override;
 	void clean() override;
+
+	void setDebug(bool state);
+	bool getDebug() const;
 private:
 	SDL_Rect Rect;
+	bool DebugState;
 };
 
 #endif /* defined (__OBSTACLE__) */
