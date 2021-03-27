@@ -37,8 +37,11 @@ void Obstacle::draw()
 {
 	/*TextureManager::Instance()->draw("obstacle", 
 		getTransform()->position.x, getTransform()->position.y, 0, 255, false);*/
-	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 255, 0, 255);
-	SDL_RenderFillRect(Renderer::Instance()->getRenderer(), &Rect);
+	if(getDebug())
+	{
+		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 0, 255, 0, 255);
+		SDL_RenderFillRect(Renderer::Instance()->getRenderer(), &Rect);
+	}
 }
 
 void Obstacle::update()
@@ -47,4 +50,13 @@ void Obstacle::update()
 
 void Obstacle::clean()
 {
+}
+bool Obstacle::getDebug() const
+{
+	return DebugState;
+}
+
+void Obstacle::setDebug(bool state)
+{
+	DebugState = state;
 }

@@ -97,6 +97,10 @@ void PlayScene::handleEvents()
 		for (auto node : m_pNode)
 			node->setDebug(!node->getDebugState());
 		m_pEnemy->setDebug(!m_pEnemy->getDebugState());
+		for(auto obstacle: m_pObstacle)
+		{
+			obstacle->setDebug(!obstacle->getDebug());
+		}
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_M))
