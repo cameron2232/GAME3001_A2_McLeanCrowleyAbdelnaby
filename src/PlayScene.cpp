@@ -114,6 +114,17 @@ void PlayScene::handleEvents()
 		}
 	}
 
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_K))
+	{
+		if (cooldown <= -20)
+		{
+			if (m_pEnemy->getHealth() != 0)
+				m_pEnemy->setHealth(m_pEnemy->getHealth() - 1);
+			std::cout << m_pEnemy->getHealth() << std::endl;
+			cooldown = 20;
+		}
+	}
+	
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_G))
 	{
 		if (cooldown <= -20)
@@ -168,14 +179,7 @@ void PlayScene::handleEvents()
 	{
 		m_pShip->setMoving(false);
 	}
-	//if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
-	//{
-	//	m_pShip->getTransform()->position.y += m_playerSpeed;
-	//}
-	//if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
-	//{
-	//	m_pShip->getTransform()->position.x += m_playerSpeed;
-	//}
+
 	if (EventManager::Instance().getMouseButton(1))
 	{
 		addChild(m_meleeActtack);
