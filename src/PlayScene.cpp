@@ -308,6 +308,17 @@ void PlayScene::CollisionsUpdate()
 				m_pPlayerBullets.shrink_to_fit();
 				break;
 			}
+			for(auto obstacle : m_pObstacle)
+			{
+				if(CollisionManager::AABBCheck(m_pPlayerBullets[i], obstacle))
+				{
+					removeChild(m_pPlayerBullets[i]);
+					m_pPlayerBullets[i] = nullptr;
+					m_pPlayerBullets.erase(m_pPlayerBullets.begin() + i);
+					m_pPlayerBullets.shrink_to_fit();
+					break;
+				}
+			}
 		}
 	}
 }
