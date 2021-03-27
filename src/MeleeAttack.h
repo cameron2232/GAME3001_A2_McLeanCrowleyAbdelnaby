@@ -7,13 +7,14 @@
 class MeleeAttack: public DisplayObject
 {
 public:
-	MeleeAttack();
+	MeleeAttack(float r);
 	~MeleeAttack();
 	void draw() override;
 	void update() override;
 	void clean() override;
+	void setDirection(float direction);
 private:
-
+	float m_direction;
 };
 #endif // !__MELEE_ATTACK__
 

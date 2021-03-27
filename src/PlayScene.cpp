@@ -41,14 +41,15 @@ void PlayScene::update()
 	meleeCoolDown--;
 	CollisionsUpdate();
 	updateDisplayList();
-	m_CheckShipLOS(m_pTarget);
-	m_CheckShipDetection(m_pTarget);
+	m_CheckShipLOS(m_pEnemy);
+	m_CheckShipDetection(m_pEnemy);
 	if(m_meleeActtack != nullptr)
-		m_meleeActtack->getTransform()->position = m_pShip->getTransform()->position - glm::vec2(-30.0f, 10.f);
+		m_meleeActtack->getTransform()->position = m_pShip->getTransform()->position - glm::vec2(-10.0f, 10.f);
 	for (int i = 0; i < m_pPlayerBullets.size(); i++)
 	{
-		m_pPlayerBullets[i]->getTransform()->position.x += 10;
+		m_pPlayerBullets[i]->setRotation(m_pShip->getCurrentHeading());
 	}
+	m_meleeActtack->setDirection(m_pShip->getCurrentHeading() + 90);
 }
 
 void PlayScene::clean()
@@ -144,14 +145,14 @@ void PlayScene::handleEvents()
 	{
 		m_pShip->setMoving(false);
 	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
-	{
-		m_pShip->getTransform()->position.y += m_playerSpeed;
-	}
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
-	{
-		m_pShip->getTransform()->position.x += m_playerSpeed;
-	}
+	//if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
+	//{
+	//	m_pShip->getTransform()->position.y += m_playerSpeed;
+	//}
+	//if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+	//{
+	//	m_pShip->getTransform()->position.x += m_playerSpeed;
+	//}
 	if (EventManager::Instance().getMouseButton(1))
 	{
 		addChild(m_meleeActtack);
@@ -166,7 +167,7 @@ void PlayScene::handleEvents()
 	{
 		if (cooldown <= -20)
 		{
-			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x - 20, m_pShip->getTransform()->position.y + 20));
+			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x - 10, m_pShip->getTransform()->position.y + 10, m_pShip->getCurrentHeading()));
 			cooldown = 20;
 		}
 	}
@@ -236,7 +237,8 @@ void PlayScene::start()
 	decisionTree->setAgent(m_pShip);
 	decisionTree->Display();
 
-	m_meleeActtack = new MeleeAttack();
+
+	m_meleeActtack = new MeleeAttack(m_pShip->getCurrentHeading());
 
 
 	std::cout << "------------------------" << std::endl;
@@ -266,6 +268,45 @@ void PlayScene::CollisionsUpdate()
 			else if ((m_pShip->getTransform()->position.y + m_playerSpeed) >= (obj->getTransform()->position.y + obj->getHeight()))
 			{
 				m_pShip->getTransform()->position.y += m_playerSpeed * 2;
+			}
+		}
+	}
+
+	for (int i = 0; i < m_pPlayerBullets.size(); i++)
+	{
+		if (m_pPlayerBullets[i] != nullptr)
+		{
+			if (m_pPlayerBullets[i]->getTransform()->position.x >= 900)
+			{
+				removeChild(m_pPlayerBullets[i]);
+				m_pPlayerBullets[i] = nullptr;
+				m_pPlayerBullets.erase(m_pPlayerBullets.begin() + i);
+				m_pPlayerBullets.shrink_to_fit();
+				break;
+			}
+			if (m_pPlayerBullets[i]->getTransform()->position.x <= -100)
+			{
+				removeChild(m_pPlayerBullets[i]);
+				m_pPlayerBullets[i] = nullptr;
+				m_pPlayerBullets.erase(m_pPlayerBullets.begin() + i);
+				m_pPlayerBullets.shrink_to_fit();
+				break;
+			}
+			if (m_pPlayerBullets[i]->getTransform()->position.y <= -100)
+			{
+				removeChild(m_pPlayerBullets[i]);
+				m_pPlayerBullets[i] = nullptr;
+				m_pPlayerBullets.erase(m_pPlayerBullets.begin() + i);
+				m_pPlayerBullets.shrink_to_fit();
+				break;
+			}
+			if (m_pPlayerBullets[i]->getTransform()->position.y >= 700)
+			{
+				removeChild(m_pPlayerBullets[i]);
+				m_pPlayerBullets[i] = nullptr;
+				m_pPlayerBullets.erase(m_pPlayerBullets.begin() + i);
+				m_pPlayerBullets.shrink_to_fit();
+				break;
 			}
 		}
 	}
