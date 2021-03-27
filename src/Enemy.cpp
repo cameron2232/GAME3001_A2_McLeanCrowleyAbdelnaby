@@ -31,6 +31,8 @@ Enemy::Enemy() : m_maxSpeed(10.0f)
 	setDetectionDistance(60.0f);
 	setDetectionColor(glm::vec4(0, 0, 1, 1));
 	setHasDetection(false);
+	setHealth(3);
+	setHealthPostion(getTransform()->position - glm::vec2(40.0f, 25.0f));
 }
 
 
@@ -55,6 +57,8 @@ void Enemy::draw()
 		// draw detection radius
 		Util::DrawCircle(glm::vec2(getTransform()->position.x + getWidth() / 2, getTransform()->position.y + getHeight() / 2), getDetectionDistance(), getDetectionColor());
 	}
+
+	drawHeath();
 }
 
 
@@ -64,6 +68,7 @@ void Enemy::update()
 	m_checkBounds();
 	glm::vec2 m_targetDistance = glm::vec2(abs(getTransform()->position.x - getTargetPosition().x), abs( getTransform()->position.y - getTargetPosition().y));
 	float magnitudeDistance = sqrt((m_targetDistance.x * m_targetDistance.x) + (m_targetDistance.y * m_targetDistance.y));
+	setHealthPostion(getTransform()->position - glm::vec2(40.0f, 25.0f));
 }
 
 void Enemy::clean()

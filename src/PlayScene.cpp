@@ -361,6 +361,14 @@ void PlayScene::CollisionsUpdate()
 				m_pPlayerBullets.shrink_to_fit();
 				break;
 			}
+
+			for(int i = 0; i < m_pPlayerBullets.size(); i++)
+			{
+				if(CollisionManager::AABBCheck(m_pPlayerBullets[i], m_pEnemy))
+				{
+					m_pEnemy->setHealth(m_pEnemy->getHealth() - 1);
+				}
+			}
 			for(auto obstacle : m_pObstacle)
 			{
 				if(CollisionManager::AABBCheck(m_pPlayerBullets[i], obstacle))
