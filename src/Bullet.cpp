@@ -11,6 +11,7 @@ Bullet::Bullet(float x, float y,float r): m_Orientation(glm::vec2(0.0f, -1.0f)),
 	getTransform()->position = glm::vec2(x, y);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
+	m_MaxSpeed = 1.0f;
 	getRigidBody()->isColliding = false;
 	setType(BULLET);
 }
