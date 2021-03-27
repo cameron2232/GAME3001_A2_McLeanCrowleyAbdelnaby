@@ -2,6 +2,7 @@
 #ifndef __TREE_NODE__
 #define __TREE_NODE__
 #include <string>
+#include "Agent.h"
 
 struct TreeNode
 {

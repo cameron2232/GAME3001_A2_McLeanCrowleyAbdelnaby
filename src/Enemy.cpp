@@ -1,4 +1,6 @@
 #include "Enemy.h"
+
+#include "Game.h"
 #include "glm/gtx/string_cast.hpp"
 #include "PlayScene.h"
 #include "TextureManager.h"
@@ -21,7 +23,8 @@ Enemy::Enemy() : m_maxSpeed(10.0f)
 	setCurrentHeading(0.0f); // current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
 	m_turnRate = 5.0f; // 5 degrees per frame
-
+	m_accelerationRate = 1.0f;
+	m_maxSpeed = 3.0f;
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 	setHasLOS(false);
@@ -57,8 +60,10 @@ void Enemy::draw()
 
 void Enemy::update()
 {
-	/*move();
-	m_checkBounds();*/
+	//move();
+	m_checkBounds();
+	glm::vec2 m_targetDistance = glm::vec2(abs(getTransform()->position.x - getTargetPosition().x), abs( getTransform()->position.y - getTargetPosition().y));
+	float magnitudeDistance = sqrt((m_targetDistance.x * m_targetDistance.x) + (m_targetDistance.y * m_targetDistance.y));
 }
 
 void Enemy::clean()
@@ -95,9 +100,51 @@ void Enemy::moveBack()
 
 void Enemy::move()
 {
+	//getTransform()->position += getRigidBody()->velocity;
+	//getRigidBody()->velocity *= 0.9f;
+	auto deltaTime = TheGame::Instance()->getDeltaTime();
+
+	m_targetDirection = getTargetPosition() - getTransform()->position;
+
+	// normalized direction
+	m_targetDirection = Util::normalize(m_targetDirection);
+
+	auto target_rotation = Util::signedAngle(getCurrentDirection(), m_targetDirection);
+
+	auto turn_sensitivity = 5.0f;
+
+	if (abs(target_rotation) > turn_sensitivity)
+	{
+		if (target_rotation > 0.0f)
+		{
+			setCurrentHeading(getCurrentHeading() + m_turnRate);
+		}
+		else if (target_rotation < 0.0f)
+		{
+			setCurrentHeading(getCurrentHeading() - m_turnRate);
+		}
+	}
+
+
+
+	getRigidBody()->acceleration = getCurrentDirection() * m_accelerationRate;
+
+	getRigidBody()->velocity += getCurrentDirection() * (deltaTime)+
+		0.5f * getRigidBody()->acceleration * (deltaTime);
+
+	
+	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, m_maxSpeed);
+
 	getTransform()->position += getRigidBody()->velocity;
-	getRigidBody()->velocity *= 0.9f;
 }
+
+float Enemy::getTargetDistance() const
+{
+	return m_magnitudeDistance;
+}
+
+
+
 
 float Enemy::getMaxSpeed() const
 {
@@ -112,24 +159,24 @@ void Enemy::setMaxSpeed(const float newSpeed)
 void Enemy::m_checkBounds()
 {
 
-	if (getTransform()->position.x > Config::SCREEN_WIDTH)
+	if (getTransform()->position.x + getWidth() > Config::SCREEN_WIDTH)
 	{
-		getTransform()->position = glm::vec2(0.0f, getTransform()->position.y);
+		getTransform()->position = glm::vec2(800.0f - getWidth(), getTransform()->position.y);
 	}
 
 	if (getTransform()->position.x < 0)
 	{
-		getTransform()->position = glm::vec2(800.0f, getTransform()->position.y);
+		getTransform()->position = glm::vec2(0.0f, getTransform()->position.y);
 	}
 
-	if (getTransform()->position.y > Config::SCREEN_HEIGHT)
+	if (getTransform()->position.y + getHeight() > Config::SCREEN_HEIGHT)
 	{
-		getTransform()->position = glm::vec2(getTransform()->position.x, 0.0f);
+		getTransform()->position = glm::vec2(getTransform()->position.x, 600.0f - getHeight());
 	}
 
 	if (getTransform()->position.y < 0)
 	{
-		getTransform()->position = glm::vec2(getTransform()->position.x, 600.0f);
+		getTransform()->position = glm::vec2(getTransform()->position.x, 0.0f);
 	}
 
 }

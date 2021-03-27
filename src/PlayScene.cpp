@@ -37,12 +37,14 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
-	std::cout << m_pPlayerBullets.size() << std::endl;
+	//std::cout << m_pPlayerBullets.size() << std::endl;
 	meleeCoolDown--;
 	CollisionsUpdate();
 	updateDisplayList();
 	m_CheckShipLOS(m_pEnemy);
 	m_CheckShipDetection(m_pEnemy);
+	if(m_getPatrolMode())
+		decisionTree->Update();
 	if(m_meleeActtack != nullptr)
 		m_meleeActtack->getTransform()->position = m_pShip->getTransform()->position - glm::vec2(-10.0f, 10.f);
 	for (int i = 0; i < m_pPlayerBullets.size(); i++)
@@ -50,6 +52,18 @@ void PlayScene::update()
 		m_pPlayerBullets[i]->setRotation(m_pShip->getCurrentHeading());
 	}
 	m_meleeActtack->setDirection(m_pShip->getCurrentHeading() + 90);
+
+	if(CollisionManager::AABBCheck(m_pEnemy, m_pNode[currentMapNode]))
+	{
+		if (currentMapNode == 19)
+			currentMapNode = 0;
+		else
+		{
+			currentMapNode++;
+		}
+		m_pEnemy->setTargetPosition(glm::vec2(m_pNode[currentMapNode]->getTransform()->position.x - (m_pNode[currentMapNode]->getWidth() / 2), 
+			m_pNode[currentMapNode]->getTransform()->position.y - (m_pNode[currentMapNode]->getHeight() / 2)));
+	}
 }
 
 void PlayScene::clean()
@@ -104,6 +118,11 @@ void PlayScene::handleEvents()
 			std::cout << m_pShip->getHealth() << std::endl;
 			cooldown = 20;
 		}
+	}
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P))
+	{
+		m_setPatrolMode(!m_getPatrolMode());
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_W) || EventManager::Instance().isKeyDown(SDL_SCANCODE_S) 
@@ -205,9 +224,6 @@ void PlayScene::start()
 	addChild(m_pObstacle[4]);
 	
 	// added the target to the scene a goal
-	m_pEnemy = new Enemy();
-	m_pEnemy->getTransform()->position = glm::vec2(10.0f, 30.0f);
-	addChild(m_pEnemy);
 
 	m_pNode.push_back(new Node(40, 40)); //Top Nodes
 	m_pNode.push_back(new Node(110, 40));
@@ -232,9 +248,13 @@ void PlayScene::start()
 	for (auto node : m_pNode)
 		addChild(node);
 
+	m_pEnemy = new Enemy();
+	m_pEnemy->getTransform()->position = glm::vec2(10.0f, 30.0f);
+	m_pEnemy->setTargetPosition(m_pNode[0]->getTransform()->position);
+	addChild(m_pEnemy);
 	// Create Decision Tree
 	decisionTree = new DecisionTree();
-	decisionTree->setAgent(m_pShip);
+	decisionTree->setAgent(m_pEnemy);
 	decisionTree->Display();
 
 
@@ -271,6 +291,35 @@ void PlayScene::CollisionsUpdate()
 			}
 		}
 	}
+
+	for (auto& obj : m_pObstacle)
+	{
+		if (CollisionManager::AABBCheck(m_pEnemy, obj))
+		{
+			//std::cout << m_pShip->getTransform()->position.x - m_playerSpeed << std::endl;
+			if (int(m_pEnemy->getTransform()->position.x + m_pEnemy->getWidth() - m_pEnemy->getRigidBody()->velocity.x) <= (obj->getTransform()->position.x))
+			{
+				m_pEnemy->getTransform()->position.x -= m_playerSpeed * 2;
+			}
+			else if (int(m_pEnemy->getTransform()->position.x - m_pEnemy->getRigidBody()->velocity.x) >= (obj->getTransform()->position.x + obj->getWidth()))
+			{
+				m_pEnemy->getTransform()->position.x += m_playerSpeed * 2;
+			}
+			else if ((m_pEnemy->getTransform()->position.y + m_pEnemy->getHeight() - m_playerSpeed) <= (obj->getTransform()->position.y))
+			{
+				m_pEnemy->getTransform()->position.y -= m_playerSpeed * 2;
+			}
+			else if ((m_pEnemy->getTransform()->position.y + m_playerSpeed) >= (obj->getTransform()->position.y + obj->getHeight()))
+			{
+				m_pEnemy->getTransform()->position.y += m_playerSpeed * 2;
+			}
+		}
+	}
+
+	if (m_pEnemy->getTargetDistance() < 50)
+		m_pEnemy->setMaxSpeed(1.0f);
+
+	else m_pEnemy->setMaxSpeed(3.0f);
 
 	for (int i = 0; i < m_pPlayerBullets.size(); i++)
 	{
@@ -452,4 +501,14 @@ void PlayScene::m_setDebugMode(bool state)
 bool PlayScene::m_getDebugMode() const
 {
 	return m_isGridEnabled;
+}
+
+void PlayScene::m_setPatrolMode(bool state)
+{
+	m_isPatrolling = state;
+}
+
+bool PlayScene::m_getPatrolMode() const
+{
+	return m_isPatrolling;
 }

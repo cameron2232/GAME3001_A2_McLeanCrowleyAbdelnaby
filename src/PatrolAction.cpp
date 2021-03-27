@@ -8,7 +8,8 @@ PatrolAction::PatrolAction()
 
 PatrolAction::~PatrolAction() = default;
 
-void PatrolAction::Action()
+void PatrolAction::Action(Agent* m_agent)
 {
-	std::cout << "Performing Patrol Action" << std::endl;
+	//std::cout << "Performing Patrol Action" << std::endl;
+	m_agent->move();
 }

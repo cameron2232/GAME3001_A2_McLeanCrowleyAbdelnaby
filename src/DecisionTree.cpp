@@ -23,6 +23,16 @@ void DecisionTree::setAgent(Agent * agent)
 	m_agent = agent;
 }
 
+TreeNode* DecisionTree::getCurrentNode() const
+{
+	return m_currentNode;
+}
+
+void DecisionTree::setCurrentNode(TreeNode* node)
+{
+	m_currentNode = node;
+}
+
 TreeNode* DecisionTree::AddNode(TreeNode * parent, TreeNode * child_node, const TreeNodeType type)
 {
 	switch (type)
@@ -51,6 +61,13 @@ void DecisionTree::Display()
 void DecisionTree::Update()
 {
 	m_LOSNode->setLOS(m_agent->hasLOS());
+
+	if(getCurrentNode() == m_treeNodeList[3])
+	{
+		m_CurrentAction = new PatrolAction;
+		m_CurrentAction->Action(getAgent());
+	}
+	
 }
 
 // In-order Traversal
@@ -65,6 +82,7 @@ std::string DecisionTree::MakeDecision()
 		currentNode = (currentNode->data) ? (currentNode->Right) : (currentNode->Left);
 	}
 
+	setCurrentNode(currentNode);
 	return currentNode->name;
 }
 

@@ -8,7 +8,7 @@ AttackAction::AttackAction()
 
 AttackAction::~AttackAction() = default;
 
-void AttackAction::Action()
+void AttackAction::Action(Agent* m_agent)
 {
 	std::cout << "Performing Attack Action" << std::endl;
 }

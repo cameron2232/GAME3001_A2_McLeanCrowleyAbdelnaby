@@ -22,10 +22,11 @@ public:
 	void turnLeft();
 	void moveForward();
 	void moveBack();
-	void move();
+	void move() override;
 
 	// getters
 	float getMaxSpeed() const;
+	float getTargetDistance() const;
 
 	// setters
 	void setMaxSpeed(float newSpeed);
@@ -37,6 +38,9 @@ private:
 	// steering behaviours
 	float m_maxSpeed;
 	float m_turnRate;
+	glm::vec2 m_targetDirection;
+	float m_magnitudeDistance;
+	float m_accelerationRate;
 };
 
 

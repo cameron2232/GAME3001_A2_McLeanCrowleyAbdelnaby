@@ -8,7 +8,7 @@ MoveToLOSAction::MoveToLOSAction()
 
 MoveToLOSAction::~MoveToLOSAction() = default;
 
-void MoveToLOSAction::Action()
+void MoveToLOSAction::Action(Agent* m_agent)
 {
 	std::cout << "Performing Move To LOS Action" << std::endl;
 }

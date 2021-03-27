@@ -37,6 +37,7 @@ private:
 	std::string m_guiTitle;
 	glm::vec2 m_mousePosition;
 	bool m_isGridEnabled;
+	bool m_isPatrolling;
 
 	Target* m_pTarget;
 	Ship* m_pShip;
@@ -47,12 +48,15 @@ private:
 	void m_CheckShipDetection(DisplayObject* object);
 	void m_setDebugMode(bool state);
 	bool m_getDebugMode() const;
+	void m_setPatrolMode(bool state);
+	bool m_getPatrolMode() const;
 	int cooldown = 20;
 	DecisionTree* decisionTree;
 	const float m_playerSpeed = 5.0f;
 	MeleeAttack* m_meleeActtack;
 	int meleeCoolDown = -10;
 	std::vector<Bullet*> m_pPlayerBullets;
+	int currentMapNode;
 };
 
 
