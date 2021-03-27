@@ -78,6 +78,10 @@ void Agent::drawHeath()
 	}
 }
 
+void Agent::move()
+{
+}
+
 glm::vec2 Agent::getTargetPosition() const
 {
 	return m_targetPosition;

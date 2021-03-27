@@ -9,7 +9,7 @@ public:
 	AttackAction();
 	virtual ~AttackAction();
 
-	virtual void Action() override;
+	virtual void Action(Agent* m_agent) override;
 };
 
 #endif

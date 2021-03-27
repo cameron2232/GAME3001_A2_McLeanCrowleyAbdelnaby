@@ -7,6 +7,7 @@
 #include "RadiusCondition.h"
 #include "TreeNode.h"
 #include "TreeNodeType.h"
+#include "PatrolAction.h"
 
 class DecisionTree
 {
@@ -17,6 +18,9 @@ public:
 	// Getters Setters
 	Agent* getAgent() const;
 	void setAgent(Agent* agent);
+
+	TreeNode* getCurrentNode() const;
+	void setCurrentNode(TreeNode* node);
 
 	TreeNode* AddNode(TreeNode* parent, TreeNode* child_node, TreeNodeType type);
 	void Display();
@@ -30,6 +34,9 @@ private:
 	RadiusCondition* m_RadiusNode;
 	CloseCombatCondition* m_CloseCombatNode;
 
+	ActionNode* m_CurrentAction;
+
+	TreeNode* m_currentNode;
 	void m_buildTree();
 
 	std::vector<TreeNode*> m_treeNodeList;

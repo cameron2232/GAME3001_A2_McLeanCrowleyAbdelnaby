@@ -18,6 +18,8 @@ public:
 	void update() override = 0;
 	void clean() override = 0;
 
+	virtual void move();
+
 	// getters
 	glm::vec2 getTargetPosition() const;
 	glm::vec2 getCurrentDirection() const;

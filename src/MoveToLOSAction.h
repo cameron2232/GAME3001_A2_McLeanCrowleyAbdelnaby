@@ -10,7 +10,7 @@ public:
 	MoveToLOSAction();
 	virtual ~MoveToLOSAction();
 
-	virtual void Action() override;
+	virtual void Action(Agent* m_agent) override;
 };
 
 #endif

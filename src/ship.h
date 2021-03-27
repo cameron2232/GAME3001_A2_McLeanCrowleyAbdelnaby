@@ -23,7 +23,7 @@ public:
 	void turnLeft();
 	void moveForward();
 	void moveBack();	
-	void move();
+	void move() override;
 
 	// getters
 	float getMaxSpeed() const;

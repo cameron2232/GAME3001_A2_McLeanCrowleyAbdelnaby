@@ -10,7 +10,7 @@ public:
 	ActionNode() { isLeaf = true; }
 	virtual ~ActionNode() = default;
 
-	virtual void Action() = 0;
+	virtual void Action(Agent* m_agent) = 0;
 };
 
 #endif
