@@ -85,6 +85,7 @@ void PlayScene::update()
 			m_pEnemy.shrink_to_fit();
 			m_enemysKilled++;
 			m_setPatrolMode(false);
+			SoundManager::Instance().playSound("Death", 0, -1);
 			break;
 		}
 	}
@@ -242,8 +243,10 @@ void PlayScene::handleEvents()
 			m_pShip->setAnimationState(PLAYER_SHOOT);
 			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x - 10, m_pShip->getTransform()->position.y + 10, m_pShip->getCurrentHeading()));
 			m_pPlayerBullets[m_pPlayerBullets.size() - 1]->setRotation(m_pShip->getCurrentHeading());
+			SoundManager::Instance().playSound("Fire", 0, -1);
 			cooldown = 20;
 		}
+		
 	}
 }
 
@@ -328,6 +331,17 @@ void PlayScene::start()
 	std::cout << "------------------------" << std::endl;
 	std::cout << decisionTree->MakeDecision() << std::endl;
 	std::cout << "------------------------\n" << std::endl;
+
+	SoundManager::Instance().load("../Assets/audio/bgmusic.mp3", "BGMusic", SOUND_MUSIC);
+	SoundManager::Instance().load("../Assets/audio/death.wav", "Death", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/fire.wav", "Fire", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/meleehit.wav", "Melee", SOUND_SFX);
+
+	SoundManager::Instance().allocateChannels(16);
+
+	SoundManager::Instance().playMusic("BGMusic", -1, 0);
+	SoundManager::Instance().setMusicVolume(10);
+	SoundManager::Instance().setSoundVolume(10);
 }
 
 void PlayScene::CollisionsUpdate()
@@ -460,6 +474,7 @@ void PlayScene::CollisionsUpdate()
 			if (CollisionManager::AABBCheck(m_meleeActtack, m_pEnemy[i]))
 			{
 				std::cout << "YESSS" << std::endl;
+				SoundManager::Instance().playSound("Melee", 0, -1);
 				m_pEnemy[i]->setHealth(m_pEnemy[i]->getHealth() - 1);
 			}
 		}
