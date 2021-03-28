@@ -88,6 +88,9 @@ void PlayScene::update()
 			break;
 		}
 	}
+
+	if (m_pShip->getAnimationState() == PLAYER_IDLE && m_pShip->getMoving() == true)
+		m_pShip->setAnimationState(PLAYER_RUN);
 }
 
 void PlayScene::clean()
