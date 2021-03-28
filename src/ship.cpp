@@ -1,16 +1,22 @@
 #include "ship.h"
+
+
 #include "glm/gtx/string_cast.hpp"
 #include "PlayScene.h"
 #include "TextureManager.h"
 #include "Util.h"
 
-Ship::Ship() : m_maxSpeed(10.0f)
+Ship::Ship() : m_maxSpeed(10.0f), m_currentAnimationState(PLAYER_IDLE)
 {
 	TextureManager::Instance()->load("../Assets/textures/ship3.png","ship");
+	TextureManager::Instance()->loadSpriteSheet("../Assets/sprites/CharacterSheet.txt", "../Assets/sprites/CharacterSheet.png", "CharacterSheet");
 
-	auto size = TextureManager::Instance()->getTextureSize("ship");
-	setWidth(size.x);
-	setHeight(size.y);
+
+	//auto size = TextureManager::Instance()->getTextureSize("ship");
+	setSpriteSheet(TextureManager::Instance()->getSpriteSheet("CharacterSheet"));
+
+	setWidth(70);
+	setHeight(60);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
@@ -32,7 +38,9 @@ Ship::Ship() : m_maxSpeed(10.0f)
 	setDebug(false);
 	setHealth(3);
 	setHealthPostion(getTransform()->position - glm::vec2(40.0f, 25.0f));
+	setAnimationState(PLAYER_IDLE);
 
+	m_buildAnimations();
 	//getHealth()->getTransform()->position = getTransform()->position + glm::vec2(0.0f, 25.0f);
 }
 
@@ -47,7 +55,23 @@ void Ship::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, false);
+	//TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, false);
+
+	switch(m_currentAnimationState)
+	{
+	case PLAYER_IDLE:
+		TextureManager::Instance()->playAnimation("CharacterSheet", getAnimation("idle"), x, y, 0.10f, getCurrentHeading(), 255, false);
+		break;
+	case PLAYER_RUN:
+		TextureManager::Instance()->playAnimation("CharacterSheet", getAnimation("run"), x, y, 0.10f, getCurrentHeading(), 255, false);
+		break;
+	case PLAYER_SHOOT:
+		TextureManager::Instance()->playAnimation("CharacterSheet", getAnimation("shoot"), x, y, 0.10f, getCurrentHeading(), 255, false);
+		break;
+	case PLAYER_MELEE:
+		TextureManager::Instance()->playAnimation("CharacterSheet", getAnimation("melee"), x, y, 0.10f, getCurrentHeading(), 255, false);
+		break;
+	}
 
 
 	if (getDebugState())
@@ -135,6 +159,87 @@ float Ship::getMaxSpeed() const
 void Ship::setMaxSpeed(const float newSpeed)
 {
 	m_maxSpeed = newSpeed;
+}
+
+void Ship::setAnimationState(PlayerAnimationState new_state)
+{
+	m_currentAnimationState = new_state;
+}
+
+PlayerAnimationState Ship::getAnimationState()
+{
+	return m_currentAnimationState;
+}
+
+void Ship::setSpriteSheet(SpriteSheet* sprite_sheet)
+{
+	m_CharacterAnimation = sprite_sheet;
+}
+
+void Ship::setAnimation(const Animation& animation)
+{
+	if (!m_animationsExists(animation.name))
+	{
+		m_pAnimations[animation.name] = animation;
+	}
+}
+
+bool Ship::m_animationsExists(const std::string& id)
+{
+	return m_pAnimations.find(id) != m_pAnimations.end();
+}
+
+Animation& Ship::getAnimation(const std::string& name)
+{
+	return m_pAnimations[name];
+}
+
+void Ship::m_buildAnimations()
+{
+	Animation idleAnimation = Animation();
+
+	idleAnimation.name = "idle";
+	idleAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-idle-1"));
+	idleAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-idle-2"));
+	idleAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-idle-3"));
+	idleAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-idle-4"));
+
+	setAnimation(idleAnimation);
+
+	Animation shootAnimation = Animation();
+
+	shootAnimation.name = "shoot";
+	shootAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-shoot-1"));
+	shootAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-shoot-2"));
+	shootAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-shoot-3"));
+	shootAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-shoot-4"));
+
+	setAnimation(shootAnimation);
+
+	Animation meleeAnimation = Animation();
+
+	meleeAnimation.name = "melee";
+	meleeAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-melee-1"));
+	meleeAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-melee-2"));
+	meleeAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-melee-3"));
+	meleeAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-melee-4"));
+	meleeAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-melee-5"));
+
+	setAnimation(meleeAnimation);
+
+	Animation runAnimation = Animation();
+
+	runAnimation.name = "run";
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-1"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-2"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-3"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-4"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-5"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-6"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-7"));
+	runAnimation.frames.push_back(m_CharacterAnimation->getFrame("character-run-8"));
+
+	setAnimation(runAnimation);
 }
 
 void Ship::m_checkBounds()

@@ -143,6 +143,8 @@ void PlayScene::handleEvents()
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_W) || EventManager::Instance().isKeyDown(SDL_SCANCODE_S) 
 		|| EventManager::Instance().isKeyDown(SDL_SCANCODE_A) || EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
+		if(m_pShip->getAnimationState() != PLAYER_SHOOT && m_pShip->getAnimationState() != PLAYER_MELEE)
+			m_pShip->setAnimationState(PLAYER_RUN);
 		m_pShip->setMoving(true);
 		if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
 		{
@@ -170,6 +172,8 @@ void PlayScene::handleEvents()
 		}
 		else
 		{
+			if(m_pShip->getAnimationState() == PLAYER_RUN)
+				m_pShip->setAnimationState(PLAYER_IDLE);
 			m_pShip->setXMoving(false);
 		}
 
@@ -177,11 +181,14 @@ void PlayScene::handleEvents()
 
 	else
 	{
+		if (m_pShip->getAnimationState() != PLAYER_SHOOT && m_pShip->getAnimationState() != PLAYER_MELEE)
+			m_pShip->setAnimationState(PLAYER_IDLE);
 		m_pShip->setMoving(false);
 	}
 
 	if (EventManager::Instance().getMouseButton(1))
 	{
+		m_pShip->setAnimationState(PLAYER_MELEE);
 		addChild(m_meleeActtack);
 		m_meleeActtack->setEnabled(true);
 		meleeCoolDown = -10;
@@ -190,10 +197,15 @@ void PlayScene::handleEvents()
 	{
 		m_meleeActtack->setEnabled(false);
 	}
+	if(cooldown <= 0 && m_pShip->getMoving() == false)
+	{
+		m_pShip->setAnimationState(PLAYER_IDLE);
+	}
 	if (EventManager::Instance().getMouseButton(2))
 	{
 		if (cooldown <= -20)
 		{
+			m_pShip->setAnimationState(PLAYER_SHOOT);
 			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x - 10, m_pShip->getTransform()->position.y + 10, m_pShip->getCurrentHeading()));
 			cooldown = 20;
 		}
