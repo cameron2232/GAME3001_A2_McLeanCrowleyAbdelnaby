@@ -49,8 +49,25 @@ void PlayScene::update()
 		m_CheckShipDetection(m_pEnemy[i]);
 	}
 
-	if(m_getPatrolMode())
+	if (m_getPatrolMode())
+	{
 		decisionTree->Update();
+		for (int i = 0; i < m_pEnemy.size(); i++)
+		{
+			if (m_pEnemy[i]->getAnimationState() != ENEMY_DAMAGE && m_pEnemy[i]->getAnimationState() != ENEMY_DEATH)
+				m_pEnemy[i]->setAnimationState(ENEMY_RUN);
+		}
+		
+	}
+	else
+	{
+		for (int i = 0; i < m_pEnemy.size(); i++)
+		{
+			if (m_pEnemy[i]->getAnimationState() != ENEMY_DAMAGE && m_pEnemy[i]->getAnimationState() != ENEMY_DEATH)
+				m_pEnemy[i]->setAnimationState(ENEMY_IDLE);
+		}
+	}
+
 	if(m_meleeActtack != nullptr)
 		m_meleeActtack->getTransform()->position = m_pShip->getTransform()->position - glm::vec2(-10.0f, 10.f);
 	//for (int i = 0; i < m_pPlayerBullets.size(); i++)
@@ -79,14 +96,42 @@ void PlayScene::update()
 	{
 		if (m_pEnemy[i]->getHealth() == 0)
 		{
+			m_pEnemy[i]->setAnimationState(ENEMY_DEATH);
+			m_setPatrolMode(false);
+			
+			break;
+		}
+	}
+	for (int i = 0; i < m_pEnemy.size(); i++)
+	{
+		if (m_pEnemy[i]->getAnimationState() == ENEMY_DEATH)
+		{
+			deathCooldown--;
+		}
+		if(deathCooldown <= 0)
+		{
+			m_enemysKilled++;
+			SoundManager::Instance().playSound("Death", 0, -1);
+			deathCooldown = 60;
 			removeChild(m_pEnemy[i]);
 			m_pEnemy[i] = nullptr;
 			m_pEnemy.erase(m_pEnemy.begin() + i);
 			m_pEnemy.shrink_to_fit();
-			m_enemysKilled++;
-			m_setPatrolMode(false);
-			SoundManager::Instance().playSound("Death", 0, -1);
 			break;
+		}
+	}
+
+	for (int i = 0; i < m_pEnemy.size(); i++)
+	{
+		if (m_pEnemy[i]->getAnimationState() == ENEMY_DAMAGE)
+		{
+			damageCooldown--;
+		}
+
+		if(damageCooldown <= 0)
+		{
+			damageCooldown = 60;
+			m_pEnemy[i]->setAnimationState(ENEMY_IDLE);
 		}
 	}
 
@@ -155,6 +200,7 @@ void PlayScene::handleEvents()
 				if (m_pEnemy[i]->getHealth() != 0)
 					m_pEnemy[i]->setHealth(m_pEnemy[i]->getHealth() - 1);
 				std::cout << m_pEnemy[i]->getHealth() << std::endl;
+				m_pEnemy[i]->setAnimationState(ENEMY_DAMAGE);
 			}
 			cooldown = 20;
 		}
@@ -173,6 +219,16 @@ void PlayScene::handleEvents()
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P))
 	{
 		m_setPatrolMode(!m_getPatrolMode());
+		if(m_getPatrolMode())
+		{
+			for (int i = 0; i < m_pEnemy.size(); i++)
+				m_pEnemy[i]->setAnimationState(ENEMY_RUN);
+		}
+		else
+		{
+			for (int i = 0; i < m_pEnemy.size(); i++)
+				m_pEnemy[i]->setAnimationState(ENEMY_IDLE);
+		}
 	}
 	
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_W) || EventManager::Instance().isKeyDown(SDL_SCANCODE_S) 
@@ -288,21 +344,21 @@ void PlayScene::start()
 	
 	// added the target to the scene a goal
 
-	m_pNode.push_back(new Node(40, 40)); //Top Nodes
-	m_pNode.push_back(new Node(110, 40));
-	m_pNode.push_back(new Node(170, 40));
-	m_pNode.push_back(new Node(230, 40));
-	m_pNode.push_back(new Node(290, 40));
-	m_pNode.push_back(new Node(365, 40));
+	m_pNode.push_back(new Node(40, 20)); //Top Nodes
+	m_pNode.push_back(new Node(110, 20));
+	m_pNode.push_back(new Node(170, 20));
+	m_pNode.push_back(new Node(230, 20));
+	m_pNode.push_back(new Node(290, 20));
+	m_pNode.push_back(new Node(365, 20));
 	m_pNode.push_back(new Node(365, 100)); //Right Nodes
 	m_pNode.push_back(new Node(365, 160));
 	m_pNode.push_back(new Node(365, 220));
 	m_pNode.push_back(new Node(365, 280));
-	m_pNode.push_back(new Node(365, 340));
-	m_pNode.push_back(new Node(290, 340)); //Bottom Nodes
-	m_pNode.push_back(new Node(230, 340));
-	m_pNode.push_back(new Node(170, 340));
-	m_pNode.push_back(new Node(110, 340));
+	m_pNode.push_back(new Node(365, 360));
+	m_pNode.push_back(new Node(290, 360)); //Bottom Nodes
+	m_pNode.push_back(new Node(230, 360));
+	m_pNode.push_back(new Node(170, 360));
+	m_pNode.push_back(new Node(110, 360));
 	m_pNode.push_back(new Node(40, 340));
 	m_pNode.push_back(new Node(40, 280)); //Left Nodes
 	m_pNode.push_back(new Node(40, 220));
@@ -312,7 +368,7 @@ void PlayScene::start()
 		addChild(node);
 
 	m_pEnemy.push_back(new Enemy());
-	m_pEnemy[0]->getTransform()->position = glm::vec2(10.0f, 30.0f);
+	m_pEnemy[0]->getTransform()->position = glm::vec2(10.0f, 15.0f);
 	m_pEnemy[0]->setTargetPosition(m_pNode[0]->getTransform()->position);
 	addChild(m_pEnemy[0]);
 	// Create Decision Tree
@@ -449,6 +505,8 @@ void PlayScene::CollisionsUpdate()
 				{
 					if (CollisionManager::AABBCheck(m_pPlayerBullets[i], m_pEnemy[j]))
 					{
+						damageCooldown = 60;
+						m_pEnemy[j]->setAnimationState(ENEMY_DAMAGE);
 						m_pEnemy[j]->setHealth(m_pEnemy[j]->getHealth() - 1);
 					}
 				}
@@ -473,7 +531,7 @@ void PlayScene::CollisionsUpdate()
 		{
 			if (CollisionManager::AABBCheck(m_meleeActtack, m_pEnemy[i]))
 			{
-				std::cout << "YESSS" << std::endl;
+				m_pEnemy[i]->setAnimationState(ENEMY_DAMAGE);
 				SoundManager::Instance().playSound("Melee", 0, -1);
 				m_pEnemy[i]->setHealth(m_pEnemy[i]->getHealth() - 1);
 			}
@@ -514,13 +572,7 @@ void PlayScene::GUI_Function()
 		std::cout << "------------------------\n" << std::endl;
 	}
 	
-	//static int targetPosition[] = { m_pEnemy[0]->getTransform()->position.x, m_pEnemy[0]->getTransform()->position.y };
-	//if(ImGui::SliderInt2("Target Position", targetPosition, 0, 800))
-	//{
-	//	m_pEnemy[0]->getTransform()->position.x = targetPosition[0];
-	//	m_pEnemy[0]->getTransform()->position.y = targetPosition[1];
-	//}
-	
+
 	ImGui::Separator();
 	
 	if (ImGui::Button("Start"))

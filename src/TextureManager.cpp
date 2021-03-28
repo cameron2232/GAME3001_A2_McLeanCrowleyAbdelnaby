@@ -253,8 +253,8 @@ void TextureManager::playAnimation(
 	srcRect.w = animation.frames[animation.current_frame].w;
 	srcRect.h = animation.frames[animation.current_frame].h;
 
-	destRect.w = textureWidth / 3.5;
-	destRect.h = textureHeight / 3.5;
+	destRect.w = textureWidth / 1.1;
+	destRect.h = textureHeight / 1.1;
 
 	if (centered) {
 		const int xOffset = textureWidth * 0.5;

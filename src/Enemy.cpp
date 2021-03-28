@@ -6,13 +6,15 @@
 #include "TextureManager.h"
 #include "Util.h"
 
-Enemy::Enemy() : m_maxSpeed(10.0f)
+Enemy::Enemy() : m_maxSpeed(10.0f), m_currentAnimationState(ENEMY_IDLE)
 {
-	TextureManager::Instance()->load("../Assets/textures/ship3.png", "ship");
+	TextureManager::Instance()->loadSpriteSheet("../Assets/sprites/EnemyGuard.txt", "../Assets/sprites/EnemyGuard.png", "GuardSheet");
 
-	auto size = TextureManager::Instance()->getTextureSize("ship");
-	setWidth(size.x);
-	setHeight(size.y);
+//	auto size = TextureManager::Instance()->getTextureSize("ship");
+	setSpriteSheet(TextureManager::Instance()->getSpriteSheet("GuardSheet"));
+	
+	setWidth(25);
+	setHeight(40);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
@@ -25,6 +27,7 @@ Enemy::Enemy() : m_maxSpeed(10.0f)
 	m_turnRate = 5.0f; // 5 degrees per frame
 	m_accelerationRate = 1.0f;
 	m_maxSpeed = 3.0f;
+	
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 	setHasLOS(false);
@@ -33,6 +36,9 @@ Enemy::Enemy() : m_maxSpeed(10.0f)
 	setHasDetection(false);
 	setHealth(3);
 	setHealthPostion(getTransform()->position - glm::vec2(40.0f, 25.0f));
+	setAnimationState(ENEMY_IDLE);
+
+	m_buildAnimations();
 }
 
 
@@ -46,7 +52,24 @@ void Enemy::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, getCurrentHeading(), 255, false);
+	switch(m_currentAnimationState)
+	{
+	case ENEMY_IDLE:
+		TextureManager::Instance()->playAnimation("GuardSheet", getAnimation("idle"), x, y, 0.10f, getCurrentHeading() + 80.0f, 255, false);
+		break;
+		
+	case ENEMY_RUN:
+		TextureManager::Instance()->playAnimation("GuardSheet", getAnimation("run"), x, y, 0.10f, getCurrentHeading() + 80.0f, 255, false);
+		break;
+
+	case ENEMY_DAMAGE:
+		TextureManager::Instance()->playAnimation("GuardSheet", getAnimation("damage"), x, y, 0.10f, getCurrentHeading() + 80.0f, 255, false);
+		break;
+
+	case ENEMY_DEATH:
+		TextureManager::Instance()->playAnimation("GuardSheet", getAnimation("death"), x, y, 0.10f, getCurrentHeading() + 80.0f, 255, false);
+		break;
+	}
 
 	// draw LOS
 	if (getDebugState())
@@ -159,6 +182,86 @@ float Enemy::getMaxSpeed() const
 void Enemy::setMaxSpeed(const float newSpeed)
 {
 	m_maxSpeed = newSpeed;
+}
+
+void Enemy::setAnimationState(PlayerAnimationState new_state)
+{
+	m_currentAnimationState = new_state;
+}
+
+PlayerAnimationState Enemy::getAnimationState()
+{
+	return m_currentAnimationState;
+}
+
+Animation& Enemy::getAnimation(const std::string& name)
+{
+	return m_pAnimations[name];
+}
+
+void Enemy::setSpriteSheet(SpriteSheet* sprite_sheet)
+{
+	m_EnemyAnimation = sprite_sheet;
+}
+
+void Enemy::setAnimation(const Animation& animation)
+{
+	if (!m_animationsExists(animation.name))
+	{
+		m_pAnimations[animation.name] = animation;
+	}
+}
+
+void Enemy::m_buildAnimations()
+{
+	Animation idleAnimation = Animation();
+
+	idleAnimation.name = "idle";
+	idleAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-idle-1"));
+	idleAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-idle-2"));
+	idleAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-idle-3"));
+	idleAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-idle-4"));
+
+	setAnimation(idleAnimation);
+	
+	Animation runAnimation = Animation();
+
+	runAnimation.name = "run";
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-1"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-2"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-3"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-4"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-5"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-6"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-7"));
+	runAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-walking-8"));
+
+	setAnimation(runAnimation);
+
+	Animation damageAnimation = Animation();
+
+	damageAnimation.name = "damage";
+	damageAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-damage-1"));
+	damageAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-damage-2"));
+	damageAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-damage-3"));
+	damageAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-damage-4"));
+
+	setAnimation(damageAnimation);
+
+	Animation deathAnimation = Animation();
+
+	deathAnimation.name = "death";
+	deathAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-death-1"));
+	deathAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-death-2"));
+	deathAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-death-3"));
+	deathAnimation.frames.push_back(m_EnemyAnimation->getFrame("guard-death-4"));
+
+	setAnimation(deathAnimation);
+}
+
+bool Enemy::m_animationsExists(const std::string& id)
+{
+	return m_pAnimations.find(id) != m_pAnimations.end();
 }
 
 void Enemy::m_checkBounds()
