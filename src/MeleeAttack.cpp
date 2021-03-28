@@ -1,5 +1,6 @@
 #include "MeleeAttack.h"
 #include "TextureManager.h"
+#include "Util.h"
 
 MeleeAttack::MeleeAttack(float r):m_direction(r)
 {
