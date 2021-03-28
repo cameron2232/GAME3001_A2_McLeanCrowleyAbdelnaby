@@ -38,11 +38,11 @@ private:
 	glm::vec2 m_mousePosition;
 	bool m_isGridEnabled;
 	bool m_isPatrolling;
-
+	void m_setUIScore();
 	Target* m_pTarget;
 	Ship* m_pShip;
 	Obstacle* m_pObstacle[5];
-	Enemy* m_pEnemy;
+	std::vector<Enemy*> m_pEnemy;
 	std::vector<Node*> m_pNode;
 	void m_CheckShipLOS(DisplayObject* object);
 	void m_CheckShipDetection(DisplayObject* object);
@@ -57,6 +57,8 @@ private:
 	int meleeCoolDown = -10;
 	std::vector<Bullet*> m_pPlayerBullets;
 	int currentMapNode;
+	int m_enemysKilled = 0;
+	Label* m_UIScore;
 };
 
 
