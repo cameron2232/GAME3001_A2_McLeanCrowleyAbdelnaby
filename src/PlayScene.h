@@ -59,6 +59,8 @@ private:
 	int currentMapNode;
 	int m_enemysKilled = 0;
 	Label* m_UIScore;
+	int deathCooldown = 60;
+	int damageCooldown = 60;
 };
 
 

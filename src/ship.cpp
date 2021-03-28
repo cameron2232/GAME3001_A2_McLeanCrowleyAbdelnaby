@@ -8,15 +8,15 @@
 
 Ship::Ship() : m_maxSpeed(10.0f), m_currentAnimationState(PLAYER_IDLE)
 {
-	TextureManager::Instance()->load("../Assets/textures/ship3.png","ship");
+	//TextureManager::Instance()->load("../Assets/textures/ship3.png","ship");
 	TextureManager::Instance()->loadSpriteSheet("../Assets/sprites/CharacterSheet.txt", "../Assets/sprites/CharacterSheet.png", "CharacterSheet");
 
 
 	//auto size = TextureManager::Instance()->getTextureSize("ship");
 	setSpriteSheet(TextureManager::Instance()->getSpriteSheet("CharacterSheet"));
 
-	setWidth(70);
-	setHeight(60);
+	setWidth(40);
+	setHeight(40);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
