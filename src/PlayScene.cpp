@@ -47,6 +47,8 @@ void PlayScene::update()
 	{
 		m_CheckShipLOS(m_pEnemy[i]);
 		m_CheckShipDetection(m_pEnemy[i]);
+		m_CheckEnemyDetection(m_pEnemy[i]);
+		m_CheckEnemyLOS(m_pEnemy[i]);
 	}
 
 	if (m_getPatrolMode())
@@ -617,6 +619,10 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
+			if (object->getType() == NODE || object->getType() == NONE)
+			{
+				continue;
+			}
 			// check if object is farther than than the target
 			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
 
@@ -660,6 +666,53 @@ void PlayScene::m_CheckShipDetection(DisplayObject* target_object)
 		auto hasDetection = CollisionManager::detectionCheck(m_pShip->getTransform()->position, m_pShip->getDetectionDistance(), contactList, target_object);
 
 		m_pShip->setHasDetection(hasDetection);
+	}
+}
+
+void PlayScene::m_CheckEnemyDetection(Enemy* enemy)
+{
+	// if ship to target distance is less than or equal to detection Distance
+	auto ShipToTargetDistance = Util::distance(enemy->getTransform()->position, m_pShip->getTransform()->position);
+	if (ShipToTargetDistance <= enemy->getDetectionDistance())
+	{
+		enemy->setHasDetection(true);
+	}
+	else
+	{
+		enemy->setHasDetection(false);
+	}
+}
+
+void PlayScene::m_CheckEnemyLOS(Enemy* enemy)
+{
+	// if ship to target distance is less than or equal to LOS Distance
+	auto ShipToTargetDistance = Util::distance(enemy->getTransform()->position, m_pShip->getTransform()->position);
+	if (ShipToTargetDistance <= enemy->getLOSDistance())
+	{
+		std::vector<DisplayObject*> contactList;
+		for (auto object : getDisplayList())
+		{
+			if (object->getType() == NODE || object->getType() == NONE)
+			{
+				continue;
+			}
+			// check if object is farther than than the target
+			auto ShipToObjectDistance = Util::distance(enemy->getTransform()->position, object->getTransform()->position);
+
+			if (ShipToObjectDistance <= ShipToTargetDistance)
+			{
+				if ((object->getType() != enemy->getType()) && (object->getType() != m_pShip->getType()))
+				{
+					std::cout << object->getType() << std::endl;
+					contactList.push_back(object);
+				}
+			}
+		}
+		contactList.push_back(m_pShip); // add the target to the end of the list
+		auto hasLOS = CollisionManager::LOSCheck(enemy->getTransform()->position,
+			enemy->getTransform()->position + enemy->getCurrentDirection() * enemy->getLOSDistance(), contactList, m_pShip);
+
+		enemy->setHasLOS(hasLOS);
 	}
 }
 
