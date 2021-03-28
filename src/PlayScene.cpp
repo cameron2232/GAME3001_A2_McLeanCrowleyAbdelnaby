@@ -53,6 +53,7 @@ void PlayScene::update()
 
 	if (m_getPatrolMode())
 	{
+		SoundManager::Instance().playSound("EWalk", 0, 2);
 		decisionTree->Update();
 		for (int i = 0; i < m_pEnemy.size(); i++)
 		{
@@ -138,7 +139,11 @@ void PlayScene::update()
 	}
 
 	if (m_pShip->getAnimationState() == PLAYER_IDLE && m_pShip->getMoving() == true)
+	{
+		
 		m_pShip->setAnimationState(PLAYER_RUN);
+	}
+		
 }
 
 void PlayScene::clean()
@@ -223,8 +228,13 @@ void PlayScene::handleEvents()
 		m_setPatrolMode(!m_getPatrolMode());
 		if(m_getPatrolMode())
 		{
+			
 			for (int i = 0; i < m_pEnemy.size(); i++)
+			{
+				
 				m_pEnemy[i]->setAnimationState(ENEMY_RUN);
+			}
+				
 		}
 		else
 		{
@@ -236,6 +246,7 @@ void PlayScene::handleEvents()
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_W) || EventManager::Instance().isKeyDown(SDL_SCANCODE_S) 
 		|| EventManager::Instance().isKeyDown(SDL_SCANCODE_A) || EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
+		SoundManager::Instance().playSound("PWalk", 0, 1);
 		if(m_pShip->getAnimationState() != PLAYER_SHOOT && m_pShip->getAnimationState() != PLAYER_MELEE)
 			m_pShip->setAnimationState(PLAYER_RUN);
 		m_pShip->setMoving(true);
@@ -393,6 +404,9 @@ void PlayScene::start()
 	SoundManager::Instance().load("../Assets/audio/bgmusic.mp3", "BGMusic", SOUND_MUSIC);
 	SoundManager::Instance().load("../Assets/audio/death.wav", "Death", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/fire.wav", "Fire", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/pwalk.wav", "PWalk", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/ewalk.wav", "EWalk", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/hitsound.wav", "Hit", SOUND_SFX);
 	SoundManager::Instance().load("../Assets/audio/meleehit.wav", "Melee", SOUND_SFX);
 
 	SoundManager::Instance().allocateChannels(16);
@@ -507,6 +521,7 @@ void PlayScene::CollisionsUpdate()
 				{
 					if (CollisionManager::AABBCheck(m_pPlayerBullets[i], m_pEnemy[j]))
 					{
+						SoundManager::Instance().playSound("Hit", 0, -1);
 						damageCooldown = 60;
 						m_pEnemy[j]->setAnimationState(ENEMY_DAMAGE);
 						m_pEnemy[j]->setHealth(m_pEnemy[j]->getHealth() - 1);
