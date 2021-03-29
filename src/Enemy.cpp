@@ -28,7 +28,7 @@ Enemy::Enemy() : m_maxSpeed(10.0f)
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
 	setHasLOS(false);
-	setDetectionDistance(60.0f);
+	setDetectionDistance(200.0f);
 	setDetectionColor(glm::vec4(0, 0, 1, 1));
 	setHasDetection(false);
 	setHealth(3);
