@@ -567,6 +567,10 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
+			if (object->getType() == NODE || object->getType() == NONE)
+			{
+				continue;
+			}
 			// check if object is farther than than the target
 			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
 
@@ -595,10 +599,6 @@ void PlayScene::m_CheckShipDetection(DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if (object->getType() == NODE)
-			{
-				continue;
-			}
 			// check if object is farther than than the target
 			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
 
@@ -640,7 +640,7 @@ void PlayScene::m_CheckEnemyLOS(Enemy* enemy)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if (object->getType() == NODE)
+			if (object->getType() == NODE || object->getType() == NONE)
 			{
 				continue;
 			}
@@ -651,7 +651,7 @@ void PlayScene::m_CheckEnemyLOS(Enemy* enemy)
 			{
 				if ((object->getType() != enemy->getType()) && (object->getType() != m_pShip->getType()))
 				{
-					std::cout << "NO" << std::endl;
+					std::cout << object->getType() << std::endl;
 					contactList.push_back(object);
 				}
 			}
