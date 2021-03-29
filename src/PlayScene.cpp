@@ -26,14 +26,16 @@ void PlayScene::draw()
 	{
 		addChild(m_pPlayerBullets[i]);
 	}
-	if(EventManager::Instance().isIMGUIActive())
-	{
-		GUI_Function();	
-	}
+
 
 	drawDisplayList();
 
 	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
+
+	if(EventManager::Instance().isIMGUIActive())
+	{
+		GUI_Function();	
+	}
 }
 
 void PlayScene::update()
@@ -178,17 +180,21 @@ void PlayScene::handleEvents()
 
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_H))
 	{
-		m_pShip->setDebug(!m_pShip->getDebugState());
-		for (auto node : m_pNode)
-			node->setDebug(!node->getDebugState());
-		for (int i = 0; i < m_pEnemy.size(); i++)
+		if (cooldown <= -20)
 		{
-			m_pEnemy[i]->setDebug(!m_pEnemy[i]->getDebugState());
-		}
+			m_pShip->setDebug(!m_pShip->getDebugState());
+			for (auto node : m_pNode)
+				node->setDebug(!node->getDebugState());
+			for (int i = 0; i < m_pEnemy.size(); i++)
+			{
+				m_pEnemy[i]->setDebug(!m_pEnemy[i]->getDebugState());
+			}
 
-		for(auto obstacle: m_pObstacle)
-		{
-			obstacle->setDebug(!obstacle->getDebug());
+			for (auto obstacle : m_pObstacle)
+			{
+				obstacle->setDebug(!obstacle->getDebug());
+			}
+			cooldown = 20;
 		}
 	}
 	
@@ -230,21 +236,25 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_P))
 	{
-		m_setPatrolMode(!m_getPatrolMode());
-		if(m_getPatrolMode())
+		if (cooldown <= -20)
 		{
-			
-			for (int i = 0; i < m_pEnemy.size(); i++)
+			m_setPatrolMode(!m_getPatrolMode());
+			if (m_getPatrolMode())
 			{
-				
-				m_pEnemy[i]->setAnimationState(ENEMY_RUN);
+
+				for (int i = 0; i < m_pEnemy.size(); i++)
+				{
+
+					m_pEnemy[i]->setAnimationState(ENEMY_RUN);
+				}
+
 			}
-				
-		}
-		else
-		{
-			for (int i = 0; i < m_pEnemy.size(); i++)
-				m_pEnemy[i]->setAnimationState(ENEMY_IDLE);
+			else
+			{
+				for (int i = 0; i < m_pEnemy.size(); i++)
+					m_pEnemy[i]->setAnimationState(ENEMY_IDLE);
+			}
+			cooldown = 20;
 		}
 	}
 	
@@ -345,6 +355,20 @@ void PlayScene::start()
 	addChild(m_UIScore);
 
 
+
+
+
+	instructions = new Label("--", "Consolas", 15, colour, glm::vec2(550.0f, 585.0f));
+	instructions->setParent(this);
+	addChild(instructions);
+
+	std::stringstream stream;
+
+	stream << "(P - Enemy patrol)" << " (H - Debug view)"<< " (W,A,S,D - Moves player)";
+	const std::string Score_string = stream.str();
+	instructions->setText(Score_string);
+
+
 	// add the ship to the scene as a start point
 	m_pShip = new Ship();
 	m_pShip->getTransform()->position = glm::vec2(50.0f, 550.0f);
@@ -391,6 +415,65 @@ void PlayScene::start()
 	m_pNode.push_back(new Node(40, 220));
 	m_pNode.push_back(new Node(40, 160));
 	m_pNode.push_back(new Node(40, 100));
+
+	m_pNode.push_back(new Node(143, 414));
+	m_pNode.push_back(new Node(143, 454));
+	m_pNode.push_back(new Node(143, 494));
+	m_pNode.push_back(new Node(103, 414));
+	m_pNode.push_back(new Node(63, 414));
+	m_pNode.push_back(new Node(23, 414));
+	m_pNode.push_back(new Node(103, 494));
+	m_pNode.push_back(new Node(63, 494));
+	m_pNode.push_back(new Node(23, 494));
+
+	m_pNode.push_back(new Node(200, 410));
+	m_pNode.push_back(new Node(250, 410));
+	m_pNode.push_back(new Node(300, 410));
+	m_pNode.push_back(new Node(200, 450));
+	m_pNode.push_back(new Node(200, 490));
+	m_pNode.push_back(new Node(200, 530));
+	m_pNode.push_back(new Node(200, 570));
+	m_pNode.push_back(new Node(300, 450));
+	m_pNode.push_back(new Node(300, 490));
+	m_pNode.push_back(new Node(300, 530));
+	m_pNode.push_back(new Node(300, 570));
+
+	m_pNode.push_back(new Node(500, 500));
+	m_pNode.push_back(new Node(560, 500));
+	m_pNode.push_back(new Node(640, 500));
+	m_pNode.push_back(new Node(700, 500));
+	m_pNode.push_back(new Node(750, 500));
+	m_pNode.push_back(new Node(750, 440));
+	m_pNode.push_back(new Node(750, 380));
+	m_pNode.push_back(new Node(750, 320));
+	m_pNode.push_back(new Node(750, 260));
+	m_pNode.push_back(new Node(700, 260));
+	m_pNode.push_back(new Node(640, 260));
+	m_pNode.push_back(new Node(560, 260));
+	m_pNode.push_back(new Node(500, 260));
+	m_pNode.push_back(new Node(500, 440));
+	m_pNode.push_back(new Node(500, 380));
+	m_pNode.push_back(new Node(500, 320));
+
+	m_pNode.push_back(new Node(480, 20));
+	m_pNode.push_back(new Node(540, 20));
+	m_pNode.push_back(new Node(600, 20));
+	m_pNode.push_back(new Node(660, 20));
+	m_pNode.push_back(new Node(720, 20));
+	m_pNode.push_back(new Node(760, 20));
+	m_pNode.push_back(new Node(760, 120));
+	m_pNode.push_back(new Node(760, 70));
+	m_pNode.push_back(new Node(760, 120));
+	m_pNode.push_back(new Node(480, 120));
+	m_pNode.push_back(new Node(540, 120));
+	m_pNode.push_back(new Node(600, 120));
+	m_pNode.push_back(new Node(660, 120));
+	m_pNode.push_back(new Node(720, 120));
+	m_pNode.push_back(new Node(480, 70));
+
+
+
+
 	for (auto node : m_pNode)
 		addChild(node);
 
@@ -583,39 +666,42 @@ void PlayScene::GUI_Function()
 	
 	ImGui::Begin("GAME3001 - Lab 7", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
 
-	// allow ship rotation
-	static int angle;
-	if(ImGui::SliderInt("Ship Direction", &angle, -360, 360))
-	{
-		m_pShip->setCurrentHeading(angle);
-	}
-	
-	ImGui::Separator();
-
-	static int shipPosition[] = { m_pShip->getTransform()->position.x, m_pShip->getTransform()->position.y };
-	if (ImGui::SliderInt2("Ship Position", shipPosition, 0, 800))
-	{
-		m_pShip->getTransform()->position.x = shipPosition[0];
-		m_pShip->getTransform()->position.y = shipPosition[1];
-
-		std::cout << "------------------------" << std::endl;
-		std::cout << decisionTree->MakeDecision() << std::endl;
-		std::cout << "------------------------\n" << std::endl;
-	}
-	
 
 	ImGui::Separator();
 	
 	if (ImGui::Button("Start"))
 	{
+		m_pShip->setDebug(!m_pShip->getDebugState());
+		for (auto node : m_pNode)
+			node->setDebug(!node->getDebugState());
+		for (int i = 0; i < m_pEnemy.size(); i++)
+		{
+			m_pEnemy[i]->setDebug(!m_pEnemy[i]->getDebugState());
+		}
 
+		for (auto obstacle : m_pObstacle)
+		{
+			obstacle->setDebug(!obstacle->getDebug());
+		}
 	}
 
 	ImGui::SameLine();
 	
 	if (ImGui::Button("Reset"))
 	{
-		// reset everything back to initial values
+		m_pShip->getTransform()->position = glm::vec2(50.0f, 550.0f);
+
+		if (m_pEnemy.size() == 0)
+		{
+			m_pEnemy.push_back(new Enemy());
+			m_pEnemy[0]->getTransform()->position = glm::vec2(10.0f, 15.0f);
+			m_pEnemy[0]->setTargetPosition(m_pNode[0]->getTransform()->position);
+			addChild(m_pEnemy[0]);
+		}
+		else
+		{
+			m_pEnemy[0]->getTransform()->position = glm::vec2(10.0f, 15.0f);
+		}
 		
 	}
 
@@ -648,7 +734,7 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if (object->getType() == NODE || object->getType() == NONE)
+			if (object->getType() == NODE || object->getType() == NONE || object->getType() == BULLET)
 			{
 				continue;
 			}
@@ -721,7 +807,7 @@ void PlayScene::m_CheckEnemyLOS(Enemy* enemy)
 		std::vector<DisplayObject*> contactList;
 		for (auto object : getDisplayList())
 		{
-			if (object->getType() == NODE || object->getType() == NONE)
+			if (object->getType() == NODE || object->getType() == NONE || object->getType() == BULLET)
 			{
 				continue;
 			}
