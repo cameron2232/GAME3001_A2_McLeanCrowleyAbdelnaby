@@ -16,7 +16,7 @@ MeleeAttack::~MeleeAttack()
 
 void MeleeAttack::draw()
 {
-	TextureManager::Instance()->draw("knife", getTransform()->position.x, getTransform()->position.y, m_direction, 255, false);
+	//TextureManager::Instance()->draw("knife", getTransform()->position.x, getTransform()->position.y, m_direction, 255, false);
 }
 
 void MeleeAttack::update()
