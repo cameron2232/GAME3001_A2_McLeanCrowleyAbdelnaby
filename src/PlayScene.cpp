@@ -53,7 +53,12 @@ void PlayScene::update()
 
 	if (m_getPatrolMode())
 	{
-		SoundManager::Instance().playSound("EWalk", 0, 2);
+		footstepCooldown--;
+		if(footstepCooldown <= 0)
+		{
+			footstepCooldown = 60;
+			SoundManager::Instance().playSound("EWalk", 0, 2);
+		}
 		decisionTree->Update();
 		for (int i = 0; i < m_pEnemy.size(); i++)
 		{
@@ -246,7 +251,12 @@ void PlayScene::handleEvents()
 	if(EventManager::Instance().isKeyDown(SDL_SCANCODE_W) || EventManager::Instance().isKeyDown(SDL_SCANCODE_S) 
 		|| EventManager::Instance().isKeyDown(SDL_SCANCODE_A) || EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
-		SoundManager::Instance().playSound("PWalk", 0, 1);
+		pfootstep--;
+		if(pfootstep <= 0)
+		{
+			pfootstep = 30;
+			SoundManager::Instance().playSound("PWalk", 0, 1);
+		}
 		if(m_pShip->getAnimationState() != PLAYER_SHOOT && m_pShip->getAnimationState() != PLAYER_MELEE)
 			m_pShip->setAnimationState(PLAYER_RUN);
 		m_pShip->setMoving(true);
@@ -292,16 +302,20 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().getMouseButton(1))
 	{
-		m_pShip->setAnimationState(PLAYER_MELEE);
-		addChild(m_meleeActtack);
-		m_meleeActtack->setEnabled(true);
-		meleeCoolDown = -10;
+		if(meleeCoolDown <= 0)
+		{
+			m_pShip->setAnimationState(PLAYER_MELEE);
+			addChild(m_meleeActtack);
+			m_meleeActtack->setEnabled(true);
+			meleeCoolDown = 30;
+		}
 	}
 	else
 	{
 		m_meleeActtack->setEnabled(false);
+		m_pShip->setAnimationState(PLAYER_IDLE);
 	}
-	if(cooldown <= 0 && m_pShip->getMoving() == false)
+	if(cooldown <= 0 && m_pShip->getMoving() == false && m_pShip->getAnimationState() != PLAYER_MELEE)
 	{
 		m_pShip->setAnimationState(PLAYER_IDLE);
 	}
@@ -310,7 +324,7 @@ void PlayScene::handleEvents()
 		if (cooldown <= -20)
 		{
 			m_pShip->setAnimationState(PLAYER_SHOOT);
-			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x - 10, m_pShip->getTransform()->position.y + 10, m_pShip->getCurrentHeading()));
+			m_pPlayerBullets.push_back(new Bullet(m_pShip->getTransform()->position.x + m_pShip->getWidth() / 2, m_pShip->getTransform()->position.y + m_pShip->getHeight() / 2, m_pShip->getCurrentHeading()));
 			m_pPlayerBullets[m_pPlayerBullets.size() - 1]->setRotation(m_pShip->getCurrentHeading());
 			SoundManager::Instance().playSound("Fire", 0, -1);
 			cooldown = 20;
@@ -324,8 +338,8 @@ void PlayScene::start()
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 
-	TextureManager::Instance()->load("../Assets/textures/BackgroundFramework.png", "Background");
-	const SDL_Color colour = { 0, 0, 0, 255 };
+	TextureManager::Instance()->load("../Assets/textures/BackgroundFramework_1.png", "Background");
+	const SDL_Color colour = { 0, 255, 0, 255 };
 	m_UIScore = new Label("--", "Consolas", 20, colour, glm::vec2(625.0f, 15.0f));
 	m_UIScore->setParent(this);
 	addChild(m_UIScore);
