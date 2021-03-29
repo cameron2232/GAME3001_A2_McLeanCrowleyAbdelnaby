@@ -729,6 +729,7 @@ void PlayScene::m_setUIScore()
 
 void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 {
+	bool collidingObstacle;
 	// if ship to target distance is less than or equal to LOS Distance
 	auto ShipToTargetDistance = Util::distance(m_pShip->getTransform()->position, target_object->getTransform()->position);
 	if (ShipToTargetDistance <= m_pShip->getLOSDistance())
@@ -742,8 +743,11 @@ void PlayScene::m_CheckShipLOS(DisplayObject* target_object)
 			}
 			// check if object is farther than than the target
 			auto ShipToObjectDistance = Util::distance(m_pShip->getTransform()->position, object->getTransform()->position);
-
-			if (ShipToObjectDistance <= ShipToTargetDistance)
+			bool collidingObstacle = (CollisionManager::lineRectCheck(glm::vec2(m_pShip->getTransform()->position.x + getWidth() / 2, m_pShip->getTransform()->position.y + getHeight() / 2),
+				(glm::vec2(m_pShip->getTransform()->position.x + getWidth() / 2, m_pShip->getTransform()->position.y + getHeight() / 2) + m_pShip->getCurrentDirection() * m_pShip->getLOSDistance()),
+				object->getTransform()->position, object->getWidth(), object->getHeight()));
+			
+			if (ShipToObjectDistance <= ShipToTargetDistance && collidingObstacle)
 			{
 				if ((object->getType() != m_pShip->getType()) && (object->getType() != target_object->getType()))
 				{
@@ -802,6 +806,7 @@ void PlayScene::m_CheckEnemyDetection(Enemy* enemy)
 
 void PlayScene::m_CheckEnemyLOS(Enemy* enemy)
 {
+	bool collidingObstacle;
 	// if ship to target distance is less than or equal to LOS Distance
 	auto ShipToTargetDistance = Util::distance(enemy->getTransform()->position, m_pShip->getTransform()->position);
 	if (ShipToTargetDistance <= enemy->getLOSDistance())
@@ -813,14 +818,16 @@ void PlayScene::m_CheckEnemyLOS(Enemy* enemy)
 			{
 				continue;
 			}
+			collidingObstacle = (CollisionManager::lineRectCheck(glm::vec2(enemy->getTransform()->position.x + getWidth() / 2, enemy->getTransform()->position.y + getHeight() / 2),
+				(glm::vec2(enemy->getTransform()->position.x + getWidth() / 2, enemy->getTransform()->position.y + getHeight() / 2) + enemy->getCurrentDirection() * enemy->getLOSDistance()),
+				object->getTransform()->position, object->getWidth(), object->getHeight()));
 			// check if object is farther than than the target
 			auto ShipToObjectDistance = Util::distance(enemy->getTransform()->position, object->getTransform()->position);
 
-			if (ShipToObjectDistance <= ShipToTargetDistance)
+			if (ShipToObjectDistance <= ShipToTargetDistance && collidingObstacle)
 			{
 				if ((object->getType() != enemy->getType()) && (object->getType() != m_pShip->getType()))
 				{
-					std::cout << object->getType() << std::endl;
 					contactList.push_back(object);
 				}
 			}

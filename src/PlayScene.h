@@ -66,6 +66,7 @@ private:
 	int damageCooldown = 60;
 	int footstepCooldown = 60;
 	int pfootstep = 0;
+
 };
 
 
