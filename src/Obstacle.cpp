@@ -21,7 +21,7 @@ Obstacle::Obstacle(int w, int h, int x, int y)
 
 	setWidth(w);
 	setHeight(h);
-	
+	setType(OBSTACLE);
 	Rect.w = w;
 	Rect.h = h;
 	Rect.x = getTransform()->position.x;

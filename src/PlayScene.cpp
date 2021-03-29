@@ -697,10 +697,12 @@ void PlayScene::GUI_Function()
 			m_pEnemy[0]->getTransform()->position = glm::vec2(10.0f, 15.0f);
 			m_pEnemy[0]->setTargetPosition(m_pNode[0]->getTransform()->position);
 			addChild(m_pEnemy[0]);
+			decisionTree->setAgent(m_pEnemy[0]);
 		}
 		else
 		{
 			m_pEnemy[0]->getTransform()->position = glm::vec2(10.0f, 15.0f);
+			m_pEnemy[0]->setHealth(3);
 		}
 		
 	}
